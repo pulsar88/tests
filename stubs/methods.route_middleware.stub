@@ -1,0 +1,15 @@
+/**
+     * {@inheritDoc}
+     */
+    public function getRouteName(): string
+    {
+        return '{{ route }}';
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function getMiddleware(): array
+    {
+        return [{{ middleware }}];
+    }

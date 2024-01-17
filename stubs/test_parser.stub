@@ -1,0 +1,3 @@
+        if (! $this->checkDocIgnoreInterface()) {
+            (new TestParser())->makeAutoDoc($testResponse);
+        }

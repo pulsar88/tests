@@ -1,0 +1,11 @@
+/**
+     * Creating a request from an authorized {{ name }}
+     *
+     * @throws ReflectionException
+     */
+    private function callAuthorizedBy{{ name }}RouteAction($user, array $data = [], array $parameters = []): TestResponse
+    {
+        {{ auth }}
+
+        return $this->callRouteAction($data, $parameters);
+    }

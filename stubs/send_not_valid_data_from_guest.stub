@@ -1,0 +1,18 @@
+/**
+     * Sending invalid data from a guest
+     *
+     * @throws ReflectionException
+     */
+    public function testSendFromGuestNotValidData(): void
+    {
+        if (! $this->checkValidateInterface()) {
+            $this->markTestSkipped('Тест пропущен, так как вызываемый класс не реализует интерфейс валидации');
+        }
+
+        $this->callFakeMethod();
+
+        $this->callRouteAction(
+            $this->getNotValidDataToRequest(),
+            $this->getParametersToRequest()
+        )->assertStatus($this->getCodeForInvalidData('guest'));
+    }

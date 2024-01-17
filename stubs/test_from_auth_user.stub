@@ -1,0 +1,15 @@
+/**
+     * Execute a request from an authorized user
+     *
+     * @throws ReflectionException
+     */
+    public function testFrom{{ studly_name }}(): void
+    {
+        $this->callFakeMethod();
+
+        $this->callAuthorizedBy{{ studly_name }}RouteAction(
+            $this->get{{ studly_name }}(),
+            $this->getValidDataToRequest(),
+            $this->getParametersToRequest()
+        )->assertStatus($this->getCodeForRequest('{{ name }}'));
+    }

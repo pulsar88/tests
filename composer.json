@@ -1,0 +1,28 @@
+{
+    "name": "fillincode/tests",
+    "description": "A package for simplified work with tests in Laravel",
+    "license": "MIT",
+    "autoload": {
+        "psr-4": {
+            "Fillincode\\Tests\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "Fillincode",
+            "email": "info@1rank.ru"
+        }
+    ],
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Fillincode\\Tests\\TestServiceProvider"
+            ]
+        }
+    },
+    "minimum-stability": "stable",
+    "require": {
+        "laravel/framework": "^10.0",
+        "php": "^8.0"
+    }
+}

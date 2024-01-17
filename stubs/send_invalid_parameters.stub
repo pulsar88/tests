@@ -1,0 +1,19 @@
+/**
+     * Executes a request transmitting invalid data from an authorized {{ studly_name }}
+     *
+     * @throws ReflectionException
+     */
+    public function testSendInvalidParametersFrom{{ studly_name }}(): void
+    {
+        if (! $this->checkParametersInterface()) {
+            $this->markTestSkipped('Тест пропущен, так как вызываемый класс не реализует интерфейс передачи параметров');
+        }
+
+        $this->callFakeMethod();
+
+        $this->callAuthorizedBy{{ studly_name }}RouteAction(
+            $this->get{{ studly_name }}(),
+            $this->getValidDataToRequest(),
+            $this->getInvalidParametersToRequest()
+        )->assertStatus($this->getCodeForInvalidParameters('{{ name }}'));
+    }

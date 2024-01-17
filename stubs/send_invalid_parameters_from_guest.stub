@@ -1,0 +1,18 @@
+/**
+     * Performs a request transmitting invalid data from an unauthorized user
+     *
+     * @throws ReflectionException
+     */
+    public function testSendInvalidParametersFromGuest(): void
+    {
+        if (! $this->checkParametersInterface()) {
+            $this->markTestSkipped('Тест пропущен, так как вызываемый класс не реализует интерфейс передачи параметров');
+        }
+
+        $this->callFakeMethod();
+
+        $this->callRouteAction(
+            $this->getValidDataToRequest(),
+            $this->getInvalidParametersToRequest()
+        )->assertStatus($this->getCodeForInvalidParameters('guest'));
+    }

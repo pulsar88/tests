@@ -1,0 +1,14 @@
+/**
+     * Fulfilling a request from a guest
+     *
+     * @throws ReflectionException
+     */
+    public function testFromGuest(): void
+    {
+        $this->callFakeMethod();
+
+        $this->callRouteAction(
+            $this->getValidDataToRequest(),
+            $this->getParametersToRequest()
+        )->assertStatus($this->getCodeForRequest('guest'));
+    }

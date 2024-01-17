@@ -1,0 +1,19 @@
+/**
+     * Sending invalid data from an authorized {{ studly_name }}
+     *
+     * @throws ReflectionException
+     */
+    public function testSendFrom{{ studly_name }}NotValidData(): void
+    {
+        if (! $this->checkValidateInterface()) {
+            $this->markTestSkipped('Тест пропущен, так как вызываемый класс не реализует интерфейс валидации');
+        }
+
+        $this->callFakeMethod();
+
+        $this->callAuthorizedBy{{ studly_name }}RouteAction(
+            $this->get{{ studly_name }}(),
+            $this->getNotValidDataToRequest(),
+            $this->getParametersToRequest()
+        )->assertStatus($this->getCodeForInvalidData('{{ name }}'));
+    }

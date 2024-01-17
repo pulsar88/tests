@@ -1,0 +1,129 @@
+<?php
+
+namespace Tests\Feature;
+
+{{ use_test_parser }}use Fillincode\Tests\Traits\DocTrait;
+use Fillincode\Tests\Traits\FakeTrait;
+use Fillincode\Tests\Traits\GetCodesTrait;
+use Fillincode\Tests\Traits\GetDataTrait;
+use Fillincode\Tests\Traits\MockTrait;
+use Illuminate\Routing\Route;
+use Illuminate\Testing\TestResponse;
+use Laravel\Passport\Passport;
+use ReflectionException;
+use Tests\TestCase;
+
+/**
+ * Базовый класс для функциональных тестов
+ */
+abstract class BaseFeatureTest extends TestCase
+{
+    use DocTrait, FakeTrait, GetCodesTrait, GetDataTrait, MockTrait;
+
+    /**
+     * Получение имени маршрута
+     */
+    abstract public function getRouteName(): string;
+
+    /**
+     * Возвращает промежуточное ПО маршрута
+     */
+    abstract public function getMiddleware(): array;
+
+    /**
+     * Получение объекта маршрута по имени маршрута
+     */
+    private function getRouteByName(): Route
+    {
+        $route = \Illuminate\Support\Facades\Route::getRoutes()
+            ->getByName($this->getRouteName());
+
+        if (! $route) {
+            $this->fail("Маршрут с именем \"{$this->getRouteName()}\" не найден!");
+        }
+
+        return $route;
+    }
+
+    /**
+     * Проверка, содержит ли маршрут переданное промежуточное ПО
+     *
+     * @return $this
+     */
+    private function assertRouteContainsMiddleware(array $names): self
+    {
+        $route = $this->getRouteByName();
+
+        foreach ($names as $name) {
+            $this->assertContains(
+                $name,
+                $route->middleware(),
+                "Маршрут не содержит промежуточного ПО \"$name\""
+            );
+        }
+
+        return $this;
+    }
+
+    /**
+     * Проверка, содержит ли маршрут только переданное промежуточное ПО
+     *
+     * @return $this
+     */
+    private function assertRouteHasExactMiddleware(array $names): self
+    {
+        $route = $this->getRouteByName();
+
+        $this->assertRouteContainsMiddleware($names);
+
+        $this->assertCount(
+            count($names),
+            $route->middleware(),
+            'Маршрут содержит иное количество промежуточного ПО.'
+        );
+
+        return $this;
+    }
+
+    /**
+     * Выполнение запроса
+     *
+     * @throws ReflectionException
+     */
+    private function callRouteAction(array $data = [], array $parameters = []): TestResponse
+    {
+        $route = $this->getRouteByName();
+        $method = $route->methods()[0];
+        $uri = route($this->getRouteName(), $parameters);
+
+        $this->callMockMethod();
+
+        $testResponse = $this->json($method, $uri, $data);
+        {{ test_parser }}
+        return $testResponse;
+    }
+
+    {{ route_actions }}
+
+    {{ test_from_auth_users }}
+
+    {{ test_from_guest }}
+
+    /**
+     * Тестирование промежуточного ПО маршрута
+     */
+    public function testMiddleware(): void
+    {
+        $this->assertRouteHasExactMiddleware(
+            $this->getMiddleware()
+        );
+    }
+
+    {{ send_not_valid_data }}
+
+    {{ send_not_valid_data_from_guest }}
+
+    {{ send_invalid_parameters }}
+
+    {{ send_invalid_parameters_from_guest }}
+}

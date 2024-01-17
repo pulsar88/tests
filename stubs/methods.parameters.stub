@@ -1,0 +1,19 @@
+    /**
+     * {@inheritDoc}
+     */
+    public function getParameters(): array
+    {
+        return [
+            {{ parameters }}
+        ];
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function getInvalidParameters(): array
+    {
+        return [
+            {{ parameters }}
+        ];
+    }
