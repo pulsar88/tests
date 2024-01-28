@@ -293,7 +293,7 @@ class TestGenerator extends BaseGenerator
     protected function setPath(): void
     {
         $this->path = 'tests' . DIRECTORY_SEPARATOR . 'Feature' . DIRECTORY_SEPARATOR .
-            Str::of($this->className)->replace('/', DIRECTORY_SEPARATOR)->value() . '.php';
+            Str::of($this->className)->replace('/', DIRECTORY_SEPARATOR) . '.php';
     }
 
     /**
