@@ -51,7 +51,7 @@ class MakeFTestCommand extends Command
 
         $route_name = $this->anticipate('Введите имя маршрута', collect($routes)->map(function ($route) {
             return $route->getName();
-        })->filter()->all()->toArray());
+        })->filter()->all());
 
         $middlewares = $this->ask(
             'Введите промежуточное ПО через запятую',
