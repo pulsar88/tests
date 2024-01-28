@@ -3,6 +3,7 @@
 namespace Fillincode\Tests\Generator;
 
 use Illuminate\Support\Facades\File;
+use Illuminate\Support\Str;
 
 class BaseFeatureTestGenerator extends BaseGenerator
 {
@@ -71,13 +72,13 @@ class BaseFeatureTestGenerator extends BaseGenerator
             if ($user !== 'guest') {
                 $auth = '$this->be($user, \'' . $auth_guard . '\');';
 
-                if (str($auth_guard)->upper()->value() === 'PASSPORT') {
+                if (Str::upper($auth_guard) === 'PASSPORT') {
                     $auth = 'Passport::actingAs($user, [\'*\']);';
                 }
 
                 $result .= $this->stubReplace(
                     ['{{ name }}', '{{ auth }}',],
-                    [str($user)->studly(), $auth],
+                    [Str::studly($user), $auth],
                     $stub) . "\n";
             }
         }
@@ -98,7 +99,7 @@ class BaseFeatureTestGenerator extends BaseGenerator
             if ($user !== 'guest') {
                 $result .= $this->stubReplace(
                     ['{{ studly_name }}', '{{ name }}'],
-                    [str($user)->studly(), $user],
+                    [Str::studly($user), $user],
                     $stub
                 );
             }
@@ -132,7 +133,7 @@ class BaseFeatureTestGenerator extends BaseGenerator
             if ($user !== 'guest') {
                 $result .= $this->stubReplace(
                     ['{{ studly_name }}', '{{ name }}'],
-                    [str($user)->studly(), $user],
+                    [Str::studly($user), $user],
                     $stub
                 ) . "\n";
             }
@@ -166,7 +167,7 @@ class BaseFeatureTestGenerator extends BaseGenerator
             if ($user !== 'guest') {
                 $result .= $this->stubReplace(
                     ['{{ studly_name }}', '{{ name }}'],
-                    [str($user)->studly(), $user,],
+                    [Str::studly($user), $user,],
                     $stub
                 );
             }
