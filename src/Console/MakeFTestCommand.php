@@ -75,6 +75,9 @@ class MakeFTestCommand extends Command
         $interfaces = $this->choice(
             'Выберите интерфейсы, которые должен будет реализовать тест',
             $interfaces,
+            null,
+            null,
+            true
         );
 
         $generator = new TestGenerator($className, $interfaces, $route_name, $middlewares);

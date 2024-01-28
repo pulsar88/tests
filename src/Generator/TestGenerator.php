@@ -85,7 +85,7 @@ class TestGenerator extends BaseGenerator
     protected function getNamespace(): string
     {
         if (Str::contains($this->className, '/')) {
-            return 'Tests\\Feature\\' . str($this->className)->beforeLast('/')->replace('/', '\\');
+            return 'Tests\\Feature\\' . Str::of($this->className)->beforeLast('/')->replace('/', '\\');
         }
 
         return 'Tests\\Feature';
@@ -293,7 +293,7 @@ class TestGenerator extends BaseGenerator
     protected function setPath(): void
     {
         $this->path = 'tests' . DIRECTORY_SEPARATOR . 'Feature' . DIRECTORY_SEPARATOR .
-            str($this->className)->replace('/', DIRECTORY_SEPARATOR)->value() . '.php';
+            Str::of($this->className)->replace('/', DIRECTORY_SEPARATOR)->value() . '.php';
     }
 
     /**
@@ -317,14 +317,14 @@ class TestGenerator extends BaseGenerator
      */
     protected function ClassNameUpdate(): void
     {
-        $this->className = str($this->className)->replace('\\', '/');
+        $this->className = Str::of($this->className)->replace('\\', '/');
 
-        $last = str($this->className)->afterLast('/');
+        $last = Str::of($this->className)->afterLast('/');
 
         if (!$last->endsWith('Test') && !$last->endsWith('test')) {
             $this->className .= 'Test';
         } else if ($last->endsWith('test')) {
-            $this->className = str($this->className)->replaceLast('test', 'Test');
+            $this->className = Str::of($this->className)->replaceLast('test', 'Test');
         }
     }
 }
