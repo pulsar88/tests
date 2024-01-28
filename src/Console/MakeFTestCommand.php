@@ -54,17 +54,12 @@ class MakeFTestCommand extends Command
 
         $routes = Route::getRoutes();
 
-        $route_name = suggest(
-            'введите имя маршрута',
-            collect($routes)->map(function ($route) {
-                return $route->getName();
-            })->filter()->all(),
-            'api.user.update',
-        );
+        $route_name = $this->anticipate('Введите имя маршрута', collect($routes)->map(function ($route) {
+            return $route->getName();
+        })->filter()->all()->toArray());
 
-        $middlewares = text(
+        $middlewares = $this->ask(
             'Введите промежуточное ПО через запятую',
-            'api, auth',
             implode(', ', $routes->getByName($route_name)->middleware() ?? [])
         );
 
@@ -82,14 +77,14 @@ class MakeFTestCommand extends Command
             $interfaces[] = DocIgnoreInterface::class;
         }
 
-        $interfaces = multiselect(
-            label: 'Выберите интерфейсы, которые должен будет реализовать тест',
-            options: $interfaces
+        $interfaces = $this->choice(
+            'Выберите интерфейсы, которые должен будет реализовать тест',
+            $interfaces,
         );
 
         $generator = new TestGenerator($className, $interfaces, $route_name, $middlewares);
 
-        info(sprintf('class [%s] created successfully.', $generator->generate()));
+        $this->info(sprintf('class [%s] created successfully.', $generator->generate()));
 
         return self::SUCCESS;
     }

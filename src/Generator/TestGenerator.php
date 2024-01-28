@@ -24,13 +24,37 @@ class TestGenerator extends BaseGenerator
      */
     protected string $path;
 
+    /**
+     * Имя класса
+     */
+    protected string $className;
+
+    /**
+     * Интерфейсы, которые будет реализовывать класс
+     */
+    protected array $interfaces;
+
+    /**
+     * Имя маршрута
+     */
+    protected string $route_name;
+
+    /**
+     * Промежуточное ПО маршрута
+     */
+    protected string $middlewares;
+
     public function __construct(
-        protected string $className,
-        protected array  $interfaces,
-        protected string $route_name,
-        protected string $middlewares,
+        string $className,
+        array  $interfaces,
+        string $route_name,
+        string $middlewares
     )
     {
+        $this->className = $className;
+        $this->interfaces = $interfaces;
+        $this->route_name = $route_name;
+        $this->middlewares = $middlewares;
     }
 
     /**
@@ -120,15 +144,28 @@ class TestGenerator extends BaseGenerator
         $methods = $this->getRouteMiddlewares();
 
         foreach ($this->interfaces as $interface) {
-            $methods .= match ($interface) {
-                CodeInterface::class => $this->getFilledCodes() . "\n",
-                ParametersInterface::class => $this->getFilledParameters() . "\n",
-                FakeInterface::class => $this->getStub('methods.faker') . "\n",
-                MockInterface::class => $this->getStub('methods.mock') . "\n",
-                ParametersCodeInterface::class => $this->getFilledInvalidParametersCodes() . "\n",
-                ValidateInterface::class => $this->getFilledValidData() . "\n",
-                default => '',
-            };
+            switch ($interface) {
+                case CodeInterface::class:
+                    $methods .= $this->getFilledCodes() . "\n";
+                    break;
+                case ParametersInterface::class:
+                    $methods .= $this->getFilledParameters() . "\n";
+                    break;
+                case FakeInterface::class:
+                    $methods .= $this->getStub('methods.faker') . "\n";
+                    break;
+                case MockInterface::class:
+                    $methods .= $this->getStub('methods.mock') . "\n";
+                    break;
+                case ParametersCodeInterface::class:
+                    $methods .= $this->getFilledInvalidParametersCodes() . "\n";
+                    break;
+                case ValidateInterface::class:
+                    $methods .= $this->getFilledValidData() . "\n";
+                    break;
+                default:
+                    $methods .= '';
+            }
         }
 
         return trim($methods, "\n");
