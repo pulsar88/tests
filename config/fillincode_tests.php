@@ -2,7 +2,7 @@
 
 return [
     'users' => [
-        'guest',
+        'guest' => '',
         'user' => 'Passport',
         'admin' => 'web',
     ],
