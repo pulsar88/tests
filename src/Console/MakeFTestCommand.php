@@ -41,16 +41,11 @@ class MakeFTestCommand extends Command
      */
     public function handle()
     {
-        $className = text(
-            'введите название класса',
-            'Projects/GetProjectTest',
-            required: true,
-            validate: fn (string $value) => match (true) {
-                strlen($value) < 3 => 'The name must be at least 3 characters.',
-                strlen($value) > 255 => 'The name must not exceed 255 characters.',
-                default => null
-            },
-        );
+        $className = $this->ask('Введите название класса');
+
+        if (!$className) {
+            return self::FAIL;
+        }
 
         $routes = Route::getRoutes();
 
