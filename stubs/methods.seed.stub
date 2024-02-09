@@ -1,7 +1,7 @@
     /**
      * {@inheritDoc}
      */
-    public function faker(): void
+    public function dbSeed(): void
     {
         //
     }

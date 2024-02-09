@@ -6,7 +6,9 @@ use Error;
 use Fillincode\Tests\Helpers\ReflectionHelper;
 use Fillincode\Tests\Helpers\RouteHelper;
 use Fillincode\Tests\Interfaces\CodeInterface;
-use Fillincode\Tests\Interfaces\FakeInterface;
+use Fillincode\Tests\Interfaces\JobTestInterface;
+use Fillincode\Tests\Interfaces\NotificationTestInterface;
+use Fillincode\Tests\Interfaces\SeedInterface;
 use Fillincode\Tests\Interfaces\MockInterface;
 use Fillincode\Tests\Interfaces\ParametersCodeInterface;
 use Fillincode\Tests\Interfaces\ParametersInterface;
@@ -24,37 +26,13 @@ class TestGenerator extends BaseGenerator
      */
     protected string $path;
 
-    /**
-     * Имя класса
-     */
-    protected string $className;
-
-    /**
-     * Интерфейсы, которые будет реализовывать класс
-     */
-    protected array $interfaces;
-
-    /**
-     * Имя маршрута
-     */
-    protected string $route_name;
-
-    /**
-     * Промежуточное ПО маршрута
-     */
-    protected string $middlewares;
-
     public function __construct(
-        string $className,
-        array  $interfaces,
-        string $route_name,
-        string $middlewares
+        protected string $className,
+        protected array  $interfaces,
+        protected string $route_name,
+        protected string $middlewares,
     )
     {
-        $this->className = $className;
-        $this->interfaces = $interfaces;
-        $this->route_name = $route_name;
-        $this->middlewares = $middlewares;
     }
 
     /**
@@ -85,7 +63,7 @@ class TestGenerator extends BaseGenerator
     protected function getNamespace(): string
     {
         if (Str::contains($this->className, '/')) {
-            return 'Tests\\Feature\\' . Str::of($this->className)->beforeLast('/')->replace('/', '\\');
+            return 'Tests\\Feature\\' . str($this->className)->beforeLast('/')->replace('/', '\\');
         }
 
         return 'Tests\\Feature';
@@ -144,28 +122,17 @@ class TestGenerator extends BaseGenerator
         $methods = $this->getRouteMiddlewares();
 
         foreach ($this->interfaces as $interface) {
-            switch ($interface) {
-                case CodeInterface::class:
-                    $methods .= $this->getFilledCodes() . "\n";
-                    break;
-                case ParametersInterface::class:
-                    $methods .= $this->getFilledParameters() . "\n";
-                    break;
-                case FakeInterface::class:
-                    $methods .= $this->getStub('methods.faker') . "\n";
-                    break;
-                case MockInterface::class:
-                    $methods .= $this->getStub('methods.mock') . "\n";
-                    break;
-                case ParametersCodeInterface::class:
-                    $methods .= $this->getFilledInvalidParametersCodes() . "\n";
-                    break;
-                case ValidateInterface::class:
-                    $methods .= $this->getFilledValidData() . "\n";
-                    break;
-                default:
-                    $methods .= '';
-            }
+            $methods .= match ($interface) {
+                CodeInterface::class => $this->getFilledCodes() . "\n",
+                ParametersInterface::class => $this->getFilledParameters() . "\n",
+                SeedInterface::class => $this->getStub('methods.seed') . "\n",
+                MockInterface::class => $this->getStub('methods.mock') . "\n",
+                ParametersCodeInterface::class => $this->getFilledInvalidParametersCodes() . "\n",
+                ValidateInterface::class => $this->getFilledValidData() . "\n",
+                NotificationTestInterface::class => $this->getStub('methods.notify_check') . "\n",
+                JobTestInterface::class => $this->getStub('methods.job_check') . "\n",
+                default => '',
+            };
         }
 
         return trim($methods, "\n");
@@ -293,7 +260,7 @@ class TestGenerator extends BaseGenerator
     protected function setPath(): void
     {
         $this->path = 'tests' . DIRECTORY_SEPARATOR . 'Feature' . DIRECTORY_SEPARATOR .
-            Str::of($this->className)->replace('/', DIRECTORY_SEPARATOR) . '.php';
+            str($this->className)->replace('/', DIRECTORY_SEPARATOR)->value() . '.php';
     }
 
     /**
@@ -317,14 +284,14 @@ class TestGenerator extends BaseGenerator
      */
     protected function ClassNameUpdate(): void
     {
-        $this->className = Str::of($this->className)->replace('\\', '/');
+        $this->className = str($this->className)->replace('\\', '/');
 
-        $last = Str::of($this->className)->afterLast('/');
+        $last = str($this->className)->afterLast('/');
 
         if (!$last->endsWith('Test') && !$last->endsWith('test')) {
             $this->className .= 'Test';
         } else if ($last->endsWith('test')) {
-            $this->className = Str::of($this->className)->replaceLast('test', 'Test');
+            $this->className = str($this->className)->replaceLast('test', 'Test');
         }
     }
 }

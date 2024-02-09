@@ -3,12 +3,16 @@
 namespace Tests\Feature;
 
 {{ use_test_parser }}use Fillincode\Tests\Traits\DocTrait;
-use Fillincode\Tests\Traits\FakeTrait;
+use Fillincode\Tests\Traits\SeedTrait;
 use Fillincode\Tests\Traits\GetCodesTrait;
 use Fillincode\Tests\Traits\GetDataTrait;
 use Fillincode\Tests\Traits\MockTrait;
+use Fillincode\Tests\Traits\NotificationTrait;
+use Fillincode\Tests\Traits\JobTrait;
 use Illuminate\Routing\Route;
 use Illuminate\Testing\TestResponse;
+use Illuminate\Support\Facades\Notification;
+use Illuminate\Support\Facades\Queue;
 use Laravel\Passport\Passport;
 use ReflectionException;
 use Tests\TestCase;
@@ -16,9 +20,9 @@ use Tests\TestCase;
 /**
  * Базовый класс для функциональных тестов
  */
-abstract class BaseFeatureTest extends TestCase
+abstract class BaseFeatureTestCase extends TestCase
 {
-    use DocTrait, FakeTrait, GetCodesTrait, GetDataTrait, MockTrait;
+    use DocTrait, SeedTrait, GetCodesTrait, GetDataTrait, MockTrait, NotificationTrait, JobTrait;
 
     /**
      * Получение имени маршрута
@@ -96,6 +100,15 @@ abstract class BaseFeatureTest extends TestCase
         $method = $route->methods()[0];
         $uri = route($this->getRouteName(), $parameters);
 
+        if ($this->checkJobTestInterface()) {
+            Queue::fake();
+        }
+
+        if ($this->checkNotifyInterface()) {
+            Notification::fake();
+        }
+
+        $this->callSeedMethod();
         $this->callMockMethod();
 
         $testResponse = $this->json($method, $uri, $data);

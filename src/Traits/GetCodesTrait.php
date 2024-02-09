@@ -2,8 +2,6 @@
 
 namespace Fillincode\Tests\Traits;
 
-
-
 use Fillincode\Tests\Interfaces\CodeInterface;
 use Fillincode\Tests\Interfaces\ParametersCodeInterface;
 

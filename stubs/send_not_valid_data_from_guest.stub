@@ -9,8 +9,6 @@
             $this->markTestSkipped('Тест пропущен, так как вызываемый класс не реализует интерфейс валидации');
         }
 
-        $this->callFakeMethod();
-
         $this->callRouteAction(
             $this->getNotValidDataToRequest(),
             $this->getParametersToRequest()

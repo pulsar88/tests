@@ -1,0 +1,7 @@
+    /**
+     * {@inheritDoc}
+     */
+    public function notifyCheck(string $user_type): void
+    {
+        //
+    }

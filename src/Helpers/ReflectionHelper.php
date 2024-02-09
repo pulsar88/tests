@@ -51,9 +51,13 @@ class ReflectionHelper
                 $instance->$property_name = self::setProperty();
             }
 
-            $keys = array_keys(
-                $formRequestReflectionClass->getMethod('rules')->invoke($instance)
-            );
+            try {
+                $keys = array_keys(
+                    $formRequestReflectionClass->getMethod('rules')->invoke($instance)
+                );
+            } catch (\TypeError $exception) {
+            }
+
 
             break;
         }

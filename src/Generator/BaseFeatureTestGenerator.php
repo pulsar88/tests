@@ -3,7 +3,6 @@
 namespace Fillincode\Tests\Generator;
 
 use Illuminate\Support\Facades\File;
-use Illuminate\Support\Str;
 
 class BaseFeatureTestGenerator extends BaseGenerator
 {
@@ -72,14 +71,14 @@ class BaseFeatureTestGenerator extends BaseGenerator
             if ($user !== 'guest') {
                 $auth = '$this->be($user, \'' . $auth_guard . '\');';
 
-                if (Str::upper($auth_guard) === 'PASSPORT') {
+                if (str($auth_guard)->upper()->value() === 'PASSPORT') {
                     $auth = 'Passport::actingAs($user, [\'*\']);';
                 }
 
                 $result .= $this->stubReplace(
-                    ['{{ name }}', '{{ auth }}',],
-                    [Str::studly($user), $auth],
-                    $stub) . "\n";
+                        ['{{ name }}', '{{ auth }}',],
+                        [str($user)->studly(), $auth],
+                        $stub) . "\n";
             }
         }
 
@@ -99,7 +98,7 @@ class BaseFeatureTestGenerator extends BaseGenerator
             if ($user !== 'guest') {
                 $result .= $this->stubReplace(
                     ['{{ studly_name }}', '{{ name }}'],
-                    [Str::studly($user), $user],
+                    [str($user)->studly(), $user],
                     $stub
                 );
             }
@@ -132,10 +131,10 @@ class BaseFeatureTestGenerator extends BaseGenerator
         foreach ($this->users as $user => $auth_guard) {
             if ($user !== 'guest') {
                 $result .= $this->stubReplace(
-                    ['{{ studly_name }}', '{{ name }}'],
-                    [Str::studly($user), $user],
-                    $stub
-                ) . "\n";
+                        ['{{ studly_name }}', '{{ name }}'],
+                        [str($user)->studly(), $user],
+                        $stub
+                    ) . "\n";
             }
         }
 
@@ -167,7 +166,7 @@ class BaseFeatureTestGenerator extends BaseGenerator
             if ($user !== 'guest') {
                 $result .= $this->stubReplace(
                     ['{{ studly_name }}', '{{ name }}'],
-                    [Str::studly($user), $user,],
+                    [str($user)->studly(), $user,],
                     $stub
                 );
             }
@@ -218,7 +217,7 @@ class BaseFeatureTestGenerator extends BaseGenerator
     protected function saveClass(string $stub): void
     {
         File::put(
-            'tests' . DIRECTORY_SEPARATOR . 'Feature' . DIRECTORY_SEPARATOR . 'BaseFeatureTest.php',
+            'tests' . DIRECTORY_SEPARATOR . 'Feature' . DIRECTORY_SEPARATOR . 'BaseFeatureTestCase.php',
             $stub
         );
     }

@@ -4,12 +4,12 @@ namespace Fillincode\Tests\Traits;
 
 use Fillincode\Tests\Interfaces\FakeInterface;
 
-trait FakeTrait
+trait SeedTrait
 {
     /**
      * Проверяет реализует ли класс интерфейс для заполнения фейковыми данными
      */
-    public function checkFakeInterface(): bool
+    public function checkSeedInterface(): bool
     {
         return in_array(
             FakeInterface::class,
@@ -21,10 +21,10 @@ trait FakeTrait
     /**
      * Вызывает метод для заполнения фейковыми данными
      */
-    public function callFakeMethod(): void
+    public function callSeedMethod(): void
     {
-        if ($this->checkFakeInterface()) {
-            $this->faker();
+        if ($this->checkSeedInterface()) {
+            $this->dbSeed();
         }
     }
 }

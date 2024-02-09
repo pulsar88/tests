@@ -6,7 +6,6 @@ use Fillincode\Tests\Interfaces\FakeStorageInterface;
 use Fillincode\Tests\Interfaces\MockInterface;
 use Illuminate\Support\Facades\Storage;
 
-
 trait MockTrait
 {
     /**

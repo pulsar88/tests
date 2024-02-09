@@ -9,9 +9,11 @@
 4. Тестирование запросов с передачей параметров адресной строки,
 5. Проверка кода ответа для каждого теста,
 6. Заполнение данными БД перед выполнением запроса,
-7. Создание насмешек
+7. Создание насмешек,
+8. Проверка отправки уведомлений,
+9. Проверка передачи задачи в очередь
 
-## Installation
+## Установка
 
 ```shell
 composer require fillincode/tests
@@ -23,11 +25,11 @@ composer require fillincode/tests
 php artisan vendor:publish --provider="Fillincode\Tests\TestServiceProvider"
 ```
 
-## Config
+## Конфигурация
 
 Конфигурация находится в файле config/fillincode_tests.php
 
-Необходимо указать дефолтные коды ответа для пользователей, 
+Необходимо указать дефолтные коды ответа для пользователей,
 а также для невалидных данных и параметров адресной строки
 
 ```php
@@ -52,7 +54,7 @@ php artisan vendor:publish --provider="Fillincode\Tests\TestServiceProvider"
 ],
 ```
 
-## Commands
+## Консольные команды
 
 Сгенерирует базовый класс для функциональных тестов, который содержит основную логику тестов
 
@@ -60,7 +62,7 @@ php artisan vendor:publish --provider="Fillincode\Tests\TestServiceProvider"
 php artisan f-tests:init
 ```
 
-Генерирует класс теста. С помощью этой же команды можно выбрать интерфейсы, который реализует класс. 
+Генерирует класс теста. С помощью этой же команды можно выбрать интерфейсы, который реализует класс.
 Методы будет автоматически добавлены в класс
 
 ```shell
@@ -81,8 +83,6 @@ return [
     'invalid_data' => 422,
     'invalid_parameters' => 404,
 
-    'has_fillincode_swagger_parser' => true,
-
     'users' => [
         'guest',
         'web_user' => 'web',
@@ -92,14 +92,14 @@ return [
 ];
 ```
 
-После чего выполнить команду для генерации класса. 
+После чего выполнить команду для генерации класса.
 В этом классе будут реализованы методы тестирования от каждого пользователя.
 
 ```shell
 php artisan f-tests:init
 ```
 
-Затем реализовать методы либо в BaseFeatureTest, либо в TestCase для получения этих пользователей.
+Затем реализовать методы либо в BaseFeatureTestCase, либо в TestCase для получения этих пользователей.
 
 ```php
 use App\Models\User;
@@ -146,9 +146,9 @@ public function getAdmin(): User
 
 ```php
 use Fillincode\Tests\Interfaces\CodeInterface;
-use Tests\Feature\BaseFeatureTest;
+use Tests\Feature\BaseFeatureTestCase;
 
-class ExampleTest extends BaseFeatureTest implements CodeInterface
+class ExampleTest extends BaseFeatureTestCase implements CodeInterface
 {
     /**
      * {@inheritDoc}
@@ -172,9 +172,9 @@ class ExampleTest extends BaseFeatureTest implements CodeInterface
 
 ```php
 use Fillincode\Tests\Interfaces\ParametersCodeInterface;
-use Tests\Feature\BaseFeatureTest;
+use Tests\Feature\BaseFeatureTestCase;
 
-class ExampleTest extends BaseFeatureTest implements ParametersCodeInterface
+class ExampleTest extends BaseFeatureTestCase implements ParametersCodeInterface
 {
     /**
      * {@inheritDoc}
@@ -200,9 +200,9 @@ class ExampleTest extends BaseFeatureTest implements ParametersCodeInterface
 
 ```php
 use Fillincode\Tests\Interfaces\ParametersInterface;
-use Tests\Feature\BaseFeatureTest;
+use Tests\Feature\BaseFeatureTestCase;
 
-class ExampleTest extends BaseFeatureTest implements ParametersInterface
+class ExampleTest extends BaseFeatureTestCase implements ParametersInterface
 {
     /**
      * {@inheritDoc}
@@ -229,15 +229,15 @@ class ExampleTest extends BaseFeatureTest implements ParametersInterface
 ### Валидация данных
 
 1. Необходимо имплементировать интерфейс Fillincode/Tests/Interfaces/ValidateInterface
-2. Реализовать методы getValidData и getNotValidData. 
+2. Реализовать методы getValidData и getNotValidData.
 
 Первый метод должен вернуть валидные данные, второй метод должен вернуть невалидные данные
 
 ```php
 use Fillincode\Tests\Interfaces\ValidateInterface;
-use Tests\Feature\BaseFeatureTest;
+use Tests\Feature\BaseFeatureTestCase;
 
-class ExampleTest extends BaseFeatureTest implements ValidateInterface
+class ExampleTest extends BaseFeatureTestCase implements ValidateInterface
 {
     /**
      * {@inheritDoc}
@@ -265,19 +265,19 @@ class ExampleTest extends BaseFeatureTest implements ValidateInterface
 
 ### Заполнение БД данными перед выполнением каждого запроса
 
-1. Необходимо имплементировать интерфейс Fillincode/Tests/Interfaces/FakeInterface
-2. Реализовать метод faker. В этом методе нужно будет выполнить логику заполнения данными БД
+1. Необходимо имплементировать интерфейс Fillincode/Tests/Interfaces/SeedInterface
+2. Реализовать метод db_seed. В этом методе нужно будет выполнить логику заполнения данными БД
 
 ```php
-use Fillincode\Tests\Interfaces\FakeInterface;
-use Tests\Feature\BaseFeatureTest;
+use Fillincode\Tests\Interfaces\SeedInterface;
+use Tests\Feature\BaseFeatureTestCase;
 
-class ExampleTest extends BaseFeatureTest implements FakeInterface
+class ExampleTest extends BaseFeatureTestCase implements SeedInterface
 {
     /**
      * {@inheritDoc}
      */
-    public function faker(): void
+    public function db_seed(): void
     {
         Project::factory(10)->create(['web_user_id' => $this->getWebUser()->id]);
     }
@@ -292,9 +292,9 @@ class ExampleTest extends BaseFeatureTest implements FakeInterface
 
 ```php
 use Fillincode\Tests\Interfaces\FakeStorageInterface;
-use Tests\Feature\BaseFeatureTest;
+use Tests\Feature\BaseFeatureTestCase;
 
-class ExampleTest extends BaseFeatureTest implements FakeStorageInterface
+class ExampleTest extends BaseFeatureTestCase implements FakeStorageInterface
 {
     
 }
@@ -307,9 +307,9 @@ class ExampleTest extends BaseFeatureTest implements FakeStorageInterface
 
 ```php
 use Fillincode\Tests\Interfaces\MockInterface;
-use Tests\Feature\BaseFeatureTest;
+use Tests\Feature\BaseFeatureTestCase;
 
-class ExampleTest extends BaseFeatureTest implements MockInterface
+class ExampleTest extends BaseFeatureTestCase implements MockInterface
 {
     /**
      * {@inheritDoc}
@@ -321,20 +321,81 @@ class ExampleTest extends BaseFeatureTest implements MockInterface
 }
 ```
 
+### Проверка отправки уведомлений
+
+1. Необходимо имплементировать интерфейс Fillincode\Tests\Interfaces\NotificationTestInterface
+2. Реализовать метод notifyCheck. Метод принимает тип пользователя, от которого выполняется запрос
+
+Автоматически будет вызван метод fake() фасада Notification, поэтому эту логику не нужно будет реализовывать в методе notifyCheck
+
+```php
+
+use Tests\Feature\BaseFeatureTestCase;
+use Fillincode\Tests\Interfaces\NotificationTestInterface;
+
+class ExampleTest extends BaseFeatureTestCase implements NotificationTestInterface
+{
+    /**
+     * {@inheritDoc}
+     */
+    public function notifyCheck(string $user_type): void
+    {
+        if ($user_type === 'user') {
+            return;
+        }
+
+        Notification::assertSentToTimes(
+            User::query()->where('email', 'example@example.com')->first(),
+            WelcomeNotify::class,
+        );
+    }
+}
+```
+
+### Проверка отправки задач в очередь
+
+### Проверка отправки уведомлений
+
+1. Необходимо имплементировать интерфейс Fillincode\Tests\Interfaces\JobTestInterface
+2. Реализовать метод jobCheck. Метод принимает тип пользователя, от которого выполняется запрос
+
+Автоматически будет вызван метод fake() фасада Queue, поэтому эту логику не нужно будет реализовывать в методе jobCheck
+
+```php
+
+use Tests\Feature\BaseFeatureTestCase;
+use Fillincode\Tests\Interfaces\JobTestInterface;
+
+class ExampleTest extends BaseFeatureTestCase implements JobTestInterface
+{
+    /**
+     * {@inheritDoc}
+     */
+    public function jobCheck(string $user_type): void
+    {
+        if ($user_type !== 'user') {
+            return;
+        }
+
+        Queue::assertPushed(SendingNotifyAboutNewUserNews::class, 1);
+    }
+}
+```
+
 ### Если пакет работает в связке с пакетом Fillincode/Swagger и есть маршруты, которые не нужно документировать
 
-1. Необходимо имплементировать интерфейс Fillincode/Tests/Interfaces/DocIgnoreInterface 
+1. Необходимо имплементировать интерфейс Fillincode/Tests/Interfaces/DocIgnoreInterface
 
     ```php
     use Fillincode\Tests\Interfaces\DocIgnoreInterface;
-    use Tests\Feature\BaseFeatureTest;
+    use Tests\Feature\BaseFeatureTestCase;
     
-    class ExampleTest extends BaseFeatureTest implements DocIgnoreInterface
+    class ExampleTest extends BaseFeatureTestCase implements DocIgnoreInterface
     {
         
     }
     ```
-2. В классе BaseFeatureTest в метод callRouteAction добавить
+2. В классе BaseFeatureTestCase в метод callRouteAction добавить
 
     ```php
     if (! $this->checkDocIgnoreInterface()) {
@@ -344,13 +405,13 @@ class ExampleTest extends BaseFeatureTest implements MockInterface
 
 ## Пример использования пакета
 
-Для минимального тестирования достаточно создать класс, 
-который будет наследником класса BaseFeatureTest и реализовать методы getRouteName и getMiddleware
+Для минимального тестирования достаточно создать класс,
+который будет наследником класса BaseFeatureTestCase и реализовать методы getRouteName и getMiddleware
 
 ```php
-use Tests\Feature\BaseFeatureTest;
+use Tests\Feature\BaseFeatureTestCase;
 
-class ExampleTest extends BaseFeatureTest
+class ExampleTest extends BaseFeatureTestCase
 {
     /**
      * {@inheritDoc}
@@ -370,30 +431,30 @@ class ExampleTest extends BaseFeatureTest
 }
 ```
 
-Пример класса, который реализует все возможности пакета. 
+Пример класса, который реализует все возможности пакета.
 
-Возможности класса: 
+Возможности класса:
 
-1. Выполнит запросы от всех пользователей, которые определенны в конфигурации пакета, 
+1. Выполнит запросы от всех пользователей, которые определенны в конфигурации пакета,
 2. Выполнит тесты с отправкой параметров адресной строки
-3. Передаст данные для валидации, 
-4. Создаст фейковое хранилище файлов, 
-5. Подделает фасад Http, 
-6. Проигнорирует документирование результатов тестирования 
+3. Передаст данные для валидации,
+4. Создаст фейковое хранилище файлов,
+5. Подделает фасад Http,
+6. Проигнорирует документирование результатов тестирования
 7. Заполнит базу 10 проектами
 
 ```php
-use Tests\Feature\BaseFeatureTest;
+use Tests\Feature\BaseFeatureTestCase;
 use Fillincode\Tests\Interfaces\CodeInterface;
 use Fillincode\Tests\Interfaces\ParametersCodeInterface;
 use Fillincode\Tests\Interfaces\ParametersInterface;
 use Fillincode\Tests\Interfaces\ValidateInterface;
-use Fillincode\Tests\Interfaces\FakeInterface;
+use Fillincode\Tests\Interfaces\SeedInterface;
 use Fillincode\Tests\Interfaces\FakeStorageInterface;
 use Fillincode\Tests\Interfaces\MockInterface;
 use Fillincode\Tests\Interfaces\DocIgnoreInterface;
 
-class ExampleTest extends BaseFeatureTest implements CodeInterface, ParametersCodeInterface, ParametersInterface, ValidateInterface, FakeInterface, FakeStorageInterface, MockInterface, DocIgnoreInterface
+class ExampleTest extends BaseFeatureTestCase implements CodeInterface, ParametersCodeInterface, ParametersInterface, ValidateInterface, SeedInterface, FakeStorageInterface, MockInterface, DocIgnoreInterface
 {
     /**
      * {@inheritDoc}
@@ -482,7 +543,7 @@ class ExampleTest extends BaseFeatureTest implements CodeInterface, ParametersCo
     /**
      * {@inheritDoc}
      */
-    public function faker(): void
+    public function db_seed(): void
     {
         Project::factory(10)->create(['web_user_id' => $this->getWebUser()->id]);
     }

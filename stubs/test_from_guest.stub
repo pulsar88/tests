@@ -5,10 +5,11 @@
      */
     public function testFromGuest(): void
     {
-        $this->callFakeMethod();
-
         $this->callRouteAction(
             $this->getValidDataToRequest(),
             $this->getParametersToRequest()
         )->assertStatus($this->getCodeForRequest('guest'));
+
+        $this->callJobCheckMethod('guest');
+        $this->callNotifyTestMethod('guest');
     }

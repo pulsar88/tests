@@ -2,10 +2,10 @@
 
 namespace Fillincode\Tests\Interfaces;
 
-interface FakeInterface
+interface SeedInterface
 {
     /**
      * Данные, которыми будет заполнена БД перед запросом
      */
-    public function faker(): void;
+    public function dbSeed(): void;
 }
