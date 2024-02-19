@@ -2,7 +2,7 @@
 
 namespace Fillincode\Tests\Traits;
 
-use Fillincode\Tests\Interfaces\FakeInterface;
+use Fillincode\Tests\Interfaces\SeedInterface;
 
 trait SeedTrait
 {
@@ -12,7 +12,7 @@ trait SeedTrait
     public function checkSeedInterface(): bool
     {
         return in_array(
-            FakeInterface::class,
+            SeedInterface::class,
             class_implements(static::class),
             true
         );
