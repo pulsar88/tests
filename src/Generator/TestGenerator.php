@@ -146,7 +146,7 @@ class TestGenerator extends BaseGenerator
         $stub = $this->getStub('methods.route_middleware');
 
         $result = '';
-        $middlewares = explode(', ', str_replace(' ', '', trim($this->middlewares, ',')));
+        $middlewares = explode(', ', trim($this->middlewares, ','));
 
         foreach ($middlewares as $middleware) {
             $result .= "'$middleware', ";

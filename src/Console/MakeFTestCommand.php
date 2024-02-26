@@ -73,7 +73,7 @@ class MakeFTestCommand extends Command
         }
 
         $middlewares = text(
-            'Введите промежуточное ПО через запятую',
+            'Введите промежуточное ПО через запятую (между промежуточным ПО должны быть запятая и пробел)',
             'api, auth',
             implode(', ', $route->middleware() ?? [])
         );
