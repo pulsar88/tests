@@ -1,31 +1,34 @@
 <?php
 
-namespace Fillincode\Tests\Generator;
+namespace Fillincode\Tests\Generator\BaseClassGenerator;
 
+use Illuminate\Contracts\Filesystem\FileNotFoundException;
 use Illuminate\Support\Facades\File;
+use Fillincode\Tests\Generator\BaseGenerator;
 
-class BaseFeatureTestGenerator extends BaseGenerator
+class BaseTestCaseGenerator extends BaseGenerator
 {
     /**
      * Типы пользователей
-     *
-     * @var array
      */
     protected array $users;
 
-    public function __construct()
+    public function __construct(
+        protected string $configKey
+    )
     {
-        $this->users = config('fillincode_tests.users');
+        $this->users = config("fillincode-tests.$this->configKey.users");
     }
 
     /**
      * Генерация BaseFeatureTest класса
      *
      * @return void
+     * @throws FileNotFoundException
      */
     public function generate(): void
     {
-        $stub = $this->getStub('base_feature_test');
+        $stub = $this->getStub('base_class.class');
 
         $searches = [
             '{{ route_actions }}',
@@ -37,6 +40,8 @@ class BaseFeatureTestGenerator extends BaseGenerator
             '{{ send_invalid_parameters_from_guest }}',
             '{{ use_test_parser }}',
             '{{ test_parser }}',
+            '{{ class_name }}',
+            '{{ config_key }}',
         ];
 
         $replaces = [
@@ -49,6 +54,8 @@ class BaseFeatureTestGenerator extends BaseGenerator
             $this->getSendInvalidParametersFromGuest(),
             $this->getUseTestParser(),
             $this->getTestParserCode(),
+            $this->getClassName(),
+            $this->configKey,
         ];
 
         $stub = $this->stubReplace($searches, $replaces, $stub);
@@ -60,10 +67,11 @@ class BaseFeatureTestGenerator extends BaseGenerator
      * Возвращает методы для авторизации под разными пользователями
      *
      * @return string
+     * @throws FileNotFoundException
      */
     protected function getRouteActions(): string
     {
-        $stub = $this->getStub('route_action');
+        $stub = $this->getStub('base_class.route_action');
 
         $result = '';
 
@@ -87,10 +95,12 @@ class BaseFeatureTestGenerator extends BaseGenerator
 
     /**
      * Создает методы тестирования из-под авторизованного пользователя
+     *
+     * @throws FileNotFoundException
      */
     protected function getTestFromAuthUsers(): string
     {
-        $stub = $this->getStub('test_from_auth_user');
+        $stub = $this->getStub('base_class.test_from_auth_user');
 
         $result = '';
 
@@ -109,6 +119,8 @@ class BaseFeatureTestGenerator extends BaseGenerator
 
     /**
      * Создает метод тестирования из-под гостя
+     *
+     * @throws FileNotFoundException
      */
     protected function getTestFromGuest(): string
     {
@@ -116,15 +128,17 @@ class BaseFeatureTestGenerator extends BaseGenerator
             return '';
         }
 
-        return $this->getStub('test_from_guest');
+        return $this->getStub('base_class.test_from_guest');
     }
 
     /**
      * Создает метод для отправки невалидных данных
+     *
+     * @throws FileNotFoundException
      */
     protected function getSendNotValidData(): string
     {
-        $stub = $this->getStub('send_not_valid_data');
+        $stub = $this->getStub('base_class.send_not_valid_data');
 
         $result = '';
 
@@ -143,6 +157,8 @@ class BaseFeatureTestGenerator extends BaseGenerator
 
     /**
      * Создает метод для отправки невалидных данных для гостя
+     *
+     * @throws FileNotFoundException
      */
     protected function getSendNotValidDataFromGuest(): string
     {
@@ -150,15 +166,17 @@ class BaseFeatureTestGenerator extends BaseGenerator
             return '';
         }
 
-        return $this->getStub('send_not_valid_data_from_guest');
+        return $this->getStub('base_class.send_not_valid_data_from_guest');
     }
 
     /**
      * Создает метод для отправки невалидных параметров адресной строки
+     *
+     * @throws FileNotFoundException
      */
     protected function getSendInvalidParameters(): string
     {
-        $stub = $this->getStub('send_invalid_parameters');
+        $stub = $this->getStub('base_class.send_invalid_parameters');
 
         $result = '';
 
@@ -177,6 +195,8 @@ class BaseFeatureTestGenerator extends BaseGenerator
 
     /**
      * Создает метод для отправки невалидных параметров адресной строки из-под гостя
+     *
+     * @throws FileNotFoundException
      */
     protected function getSendInvalidParametersFromGuest(): string
     {
@@ -184,11 +204,12 @@ class BaseFeatureTestGenerator extends BaseGenerator
             return '';
         }
 
-        return $this->getStub('send_invalid_parameters_from_guest');
+        return $this->getStub('base_class.send_invalid_parameters_from_guest');
     }
 
     /**
      * @return string
+     * @throws FileNotFoundException
      */
     protected function getUseTestParser(): string
     {
@@ -196,11 +217,12 @@ class BaseFeatureTestGenerator extends BaseGenerator
             return '';
         }
 
-        return $this->getStub('use_test_parser') . "\n";
+        return $this->getStub('base_class.use_test_parser') . "\n";
     }
 
     /**
      * @return string
+     * @throws FileNotFoundException
      */
     protected function getTestParserCode(): string
     {
@@ -208,7 +230,12 @@ class BaseFeatureTestGenerator extends BaseGenerator
             return '';
         }
 
-        return "\n" . $this->getStub('test_parser') . "\n";
+        return "\n" . $this->getStub('base_class.test_parser') . "\n";
+    }
+
+    protected function getClassName(): string
+    {
+        return $this->configKey === 'feature' ? 'BaseFeatureTestCase' : 'BaseMoonshineTestCase';
     }
 
     /**
@@ -217,8 +244,7 @@ class BaseFeatureTestGenerator extends BaseGenerator
     protected function saveClass(string $stub): void
     {
         File::put(
-            'tests' . DIRECTORY_SEPARATOR . 'Feature' . DIRECTORY_SEPARATOR . 'BaseFeatureTestCase.php',
-            $stub
+            "tests{$this->ds}Feature$this->ds{$this->getClassName()}.php", $stub
         );
     }
 }

@@ -2,6 +2,7 @@
 
 namespace Fillincode\Tests\Console;
 
+use Fillincode\Tests\Generator\TestGenerator\TestGenerator;
 use Fillincode\Tests\Interfaces\CodeInterface;
 use Fillincode\Tests\Interfaces\DocIgnoreInterface;
 use Fillincode\Tests\Interfaces\JobTestInterface;
@@ -12,8 +13,8 @@ use Fillincode\Tests\Interfaces\MockInterface;
 use Fillincode\Tests\Interfaces\ParametersCodeInterface;
 use Fillincode\Tests\Interfaces\ParametersInterface;
 use Fillincode\Tests\Interfaces\ValidateInterface;
-use Fillincode\Tests\Generator\TestGenerator;
 use Illuminate\Console\Command;
+use Illuminate\Contracts\Filesystem\FileNotFoundException;
 use Illuminate\Support\Facades\Route;
 use ReflectionException;
 use function Laravel\Prompts\error;
@@ -22,14 +23,14 @@ use function Laravel\Prompts\multiselect;
 use function Laravel\Prompts\suggest;
 use function Laravel\Prompts\text;
 
-class MakeFTestCommand extends Command
+class MakeTestCommand extends Command
 {
     /**
      * The name and signature of the console command.
      *
      * @var string
      */
-    protected $signature = 'make:f-test';
+    protected $signature = 'fillincode-test:make-test';
 
     /**
      * The console command description.
@@ -40,9 +41,10 @@ class MakeFTestCommand extends Command
 
     /**
      * Execute the console command.
-     * @throws ReflectionException
+     *
+     * @throws ReflectionException|FileNotFoundException
      */
-    public function handle()
+    public function handle(): int
     {
         $className = text(
             'введите название класса',

@@ -1,0 +1,74 @@
+<?php
+
+namespace Tests\Feature;
+
+{{ use_test_parser }}use Illuminate\Testing\TestResponse;
+use Fillincode\Tests\BaseFillincodeTestCase;
+use Illuminate\Support\Facades\Notification;
+use Illuminate\Support\Facades\Queue;
+use Laravel\Passport\Passport;
+use ReflectionException;
+use Fillincode\Tests\Interfaces\DocIgnoreInterface;
+use Fillincode\Tests\Interfaces\JobTestInterface;
+use Fillincode\Tests\Interfaces\NotificationTestInterface;
+use Fillincode\Tests\Interfaces\ValidateInterface;
+use Fillincode\Tests\Interfaces\ParametersInterface;
+
+/**
+ * Базовый класс для функциональных тестов
+ */
+abstract class {{ class_name }} extends BaseFillincodeTestCase
+{
+    protected string $configKey = '{{ config_key }}';
+
+    /**
+     * Выполнение запроса
+     *
+     * @throws ReflectionException
+     */
+    private function callRouteAction(array $data = [], array $parameters = []): TestResponse
+    {
+        $route = $this->getRouteByName();
+        $method = $route->methods()[0];
+        $uri = route($this->getRouteName(), $parameters);
+
+        if ($this->hasInterface(JobTestInterface::class)) {
+           Queue::fake();
+        }
+
+        if ($this->hasInterface(NotificationTestInterface::class)) {
+           Notification::fake();
+        }
+
+        $this->callSeedMethod();
+        $this->callMockMethod();
+
+        $testResponse = $this->json($method, $uri, $data);
+        {{ test_parser }}
+        return $testResponse;
+    }
+
+    {{ route_actions }}
+
+    {{ test_from_auth_users }}
+
+    {{ test_from_guest }}
+
+    /**
+     * Тестирование промежуточного ПО маршрута
+     */
+    public function testMiddleware(): void
+    {
+        $this->assertRouteHasExactMiddleware(
+            $this->getMiddleware()
+        );
+    }
+
+    {{ send_not_valid_data }}
+
+    {{ send_not_valid_data_from_guest }}
+
+    {{ send_invalid_parameters }}
+
+    {{ send_invalid_parameters_from_guest }}
+}

@@ -1,6 +1,6 @@
 <?php
 
-namespace Fillincode\Tests\Generator;
+namespace Fillincode\Tests\Generator\TestGenerator;
 
 use Error;
 use Fillincode\Tests\Helpers\ReflectionHelper;
@@ -13,10 +13,11 @@ use Fillincode\Tests\Interfaces\MockInterface;
 use Fillincode\Tests\Interfaces\ParametersCodeInterface;
 use Fillincode\Tests\Interfaces\ParametersInterface;
 use Fillincode\Tests\Interfaces\ValidateInterface;
+use Fillincode\Tests\Generator\BaseGenerator;
+use Illuminate\Contracts\Filesystem\FileNotFoundException;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Str;
-use Illuminate\Validation\Rule;
 use ReflectionException;
 
 class TestGenerator extends BaseGenerator
@@ -31,20 +32,23 @@ class TestGenerator extends BaseGenerator
         protected array  $interfaces,
         protected string $route_name,
         protected string $middlewares,
+        protected string $prefix = 'Api',
+        protected string $configKey = 'feature',
     )
     {
     }
 
     /**
      * Генерация класса
-     * @throws ReflectionException
+     *
+     * @throws ReflectionException|FileNotFoundException
      */
     public function generate(): string
     {
         $this->classNameUpdate();
         $this->setPath();
 
-        $stub = $this->getStub('class');
+        $stub = $this->getStub('test.class');
 
         $stub = $this->stubReplace(
             ['{{ namespace }}', '{{ uses }}', '{{ class }}', '{{ implements }}', '{{ methods }}'],
@@ -57,13 +61,20 @@ class TestGenerator extends BaseGenerator
         return $this->path;
     }
 
+    protected function getPrefix(): string
+    {
+        return $this->prefix
+            ? str($this->prefix)->lower()->ucfirst() . '\\'
+            : '';
+    }
+
     /**
      * Возвращает namespace класса
      */
     protected function getNamespace(): string
     {
         if (Str::contains($this->className, '/')) {
-            return 'Tests\\Feature\\' . str($this->className)->beforeLast('/')->replace('/', '\\');
+            return "Tests\\Feature\\{$this->getPrefix()}" . str($this->className)->beforeLast('/')->replace('/', '\\');
         }
 
         return 'Tests\\Feature';
@@ -115,7 +126,8 @@ class TestGenerator extends BaseGenerator
 
     /**
      * Возвращает методы класса
-     * @throws ReflectionException
+     *
+     * @throws ReflectionException|FileNotFoundException
      */
     protected function getMethods(): string
     {
@@ -125,12 +137,12 @@ class TestGenerator extends BaseGenerator
             $methods .= match ($interface) {
                 CodeInterface::class => $this->getFilledCodes() . "\n",
                 ParametersInterface::class => $this->getFilledParameters() . "\n",
-                SeedInterface::class => $this->getStub('methods.seed') . "\n",
-                MockInterface::class => $this->getStub('methods.mock') . "\n",
+                SeedInterface::class => $this->getStub('test.methods_seed') . "\n",
+                MockInterface::class => $this->getStub('test.methods_mock') . "\n",
                 ParametersCodeInterface::class => $this->getFilledInvalidParametersCodes() . "\n",
                 ValidateInterface::class => $this->getFilledValidData() . "\n",
-                NotificationTestInterface::class => $this->getStub('methods.notify_check') . "\n",
-                JobTestInterface::class => $this->getStub('methods.job_check') . "\n",
+                NotificationTestInterface::class => $this->getStub('test.methods_notify_check') . "\n",
+                JobTestInterface::class => $this->getStub('test.methods_job_check') . "\n",
                 default => '',
             };
         }
@@ -140,10 +152,12 @@ class TestGenerator extends BaseGenerator
 
     /**
      * Возвращает методы получения маршрута и промежуточного ПО
+     *
+     * @throws FileNotFoundException
      */
     protected function getRouteMiddlewares(): string
     {
-        $stub = $this->getStub('methods.route_middleware');
+        $stub = $this->getStub('test.methods_route_middleware');
 
         $result = '';
         $middlewares = explode(', ', trim($this->middlewares, ','));
@@ -161,15 +175,17 @@ class TestGenerator extends BaseGenerator
 
     /**
      * Возвращает метод для изменения кодов ответа пользователей
+     *
+     * @throws FileNotFoundException
      */
     protected function getFilledCodes(): string
     {
-        $stub = $this->getStub('methods.codes');
+        $stub = $this->getStub('test.methods_codes');
 
         $result = '';
 
-        foreach (config('fillincode_tests.users') as $user => $guard) {
-            $result .= "'$user' => " . config('fillincode_tests.' . $user) . ",$this->character";
+        foreach (config("fillincode-tests.$this->configKey.users") as $user => $guard) {
+            $result .= "'$user' => " . config("fillincode-tests.$this->configKey.codes.$user") . ",$this->character";
         }
 
         return $this->stubReplace(
@@ -181,10 +197,12 @@ class TestGenerator extends BaseGenerator
 
     /**
      * Возвращает метод с передачей параметров
+     *
+     * @throws FileNotFoundException
      */
     protected function getFilledParameters(): string
     {
-        $stub = $this->getStub('methods.parameters');
+        $stub = $this->getStub('test.methods_parameters');
 
         $result = '';
 
@@ -194,7 +212,7 @@ class TestGenerator extends BaseGenerator
             foreach (RouteHelper::getParameters($uri) as $parameter) {
                 $parameter = str_replace(['{', '}'], '', $parameter);
 
-                $result .= "'$parameter' => ''" . ",\n\t\t\t";
+                $result .= "'$parameter' => ''" . ",$this->character";
             }
         }
 
@@ -207,15 +225,17 @@ class TestGenerator extends BaseGenerator
 
     /**
      * Возвращает метод для изменения кодов с передачей невалидных параметров
+     *
+     * @throws FileNotFoundException
      */
     protected function getFilledInvalidParametersCodes(): string
     {
-        $stub = $this->getStub('methods.parameters_codes');
+        $stub = $this->getStub('test.methods_parameters_codes');
 
         $result = '';
 
-        foreach (config('fillincode_tests.users') as $user => $guard) {
-            $result .= "'$user' => " . config('fillincode_tests.invalid_parameters') . ",\n\t\t\t";
+        foreach (config("fillincode-tests.$this->configKey.users") as $user => $guard) {
+            $result .= "'$user' => " . config("fillincode-tests.$this->configKey.invalid.parameters") . ",$this->character";
         }
 
         return $this->stubReplace(
@@ -228,11 +248,11 @@ class TestGenerator extends BaseGenerator
     /**
      * Возвращает метод для передачи данных в теле запроса
      *
-     * @throws ReflectionException
+     * @throws ReflectionException|FileNotFoundException
      */
     protected function getFilledValidData(): string
     {
-        $stub = $this->getStub('methods.validate');
+        $stub = $this->getStub('test.methods_validate');
 
         $route = Route::getRoutes()->getByName($this->route_name);
         ReflectionHelper::setActionController($route);
@@ -244,7 +264,7 @@ class TestGenerator extends BaseGenerator
         $result = '';
 
         foreach ($keys ?? [] as $key) {
-            $result .= "'$key' => '',\n\t\t\t";
+            $result .= "'$key' => '',$this->character";
         }
 
         return $this->stubReplace(
@@ -259,8 +279,8 @@ class TestGenerator extends BaseGenerator
      */
     protected function setPath(): void
     {
-        $this->path = 'tests' . DIRECTORY_SEPARATOR . 'Feature' . DIRECTORY_SEPARATOR .
-            str($this->className)->replace('/', DIRECTORY_SEPARATOR)->value() . '.php';
+        $this->path = "tests{$this->ds}Feature$this->ds" .
+            str($this->className)->replace('/', $this->ds)->value() . '.php';
     }
 
     /**

@@ -5,7 +5,7 @@
      */
     public function testSendFrom{{ studly_name }}NotValidData(): void
     {
-        if (! $this->checkValidateInterface()) {
+        if (! $this->hasInterface(ValidateInterface::class)) {
             $this->markTestSkipped('Тест пропущен, так как вызываемый класс не реализует интерфейс валидации');
         }
 
