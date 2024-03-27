@@ -2,10 +2,10 @@
 
 namespace {{ namespace }};
 
-use Tests\Feature\{{ extendsClass }};
+use Tests\Feature\BaseFeatureTestCase;
 {{ uses }}
 
-class {{ class }} extends {{ extendsClass }} {{ implements }}
+class {{ class }} extends BaseFeatureTestCase {{ implements }}
 {
     {{ methods }}
 }
