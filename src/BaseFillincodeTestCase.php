@@ -99,7 +99,7 @@ abstract class BaseFillincodeTestCase extends TestCase
             return $codes[$user];
         }
 
-        return config("fillincode-tests.feature.codes.$user");
+        return config("fillincode-tests.$this->configKey.codes.$user");
     }
 
     /**
@@ -111,10 +111,10 @@ abstract class BaseFillincodeTestCase extends TestCase
             $codes = $this->getCodesForInvalidParameters();
             $code = $codes[$user];
 
-            return $code >= 200 && $code < 399 ? config("fillincode-tests.feature.invalid.parameters") : $code;
+            return $code >= 200 && $code < 399 ? config("fillincode-tests.$this->configKey.invalid.parameters") : $code;
         }
 
-        return config("fillincode-tests.feature.invalid.parameters");
+        return config("fillincode-tests.$this->configKey.invalid.parameters");
     }
 
     /**
@@ -126,7 +126,7 @@ abstract class BaseFillincodeTestCase extends TestCase
 
         $def_code = $this->hasInterface(ValidateCodeInterface::class)
             ? $this->invalidParamCode()
-            : config("fillincode-tests.feature.invalid.data");
+            : config("fillincode-tests.$this->configKey.invalid.data");
 
         return $code >= 200 && $code < 399 ? $def_code : $code;
     }

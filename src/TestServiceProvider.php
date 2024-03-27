@@ -3,6 +3,7 @@
 namespace Fillincode\Tests;
 
 use Fillincode\Tests\Console\InitConfigCommand;
+use Fillincode\Tests\Console\MakeMoonshineTestCommand;
 use Fillincode\Tests\Console\MakeTestCommand;
 use Illuminate\Support\ServiceProvider;
 
@@ -15,10 +16,21 @@ class TestServiceProvider extends ServiceProvider
         ]);
 
         if ($this->app->runningInConsole()) {
-            $this->commands([
-                MakeTestCommand::class,
-                InitConfigCommand::class,
-            ]);
+            $this->commands($this->getCommands());
         }
+    }
+
+    protected function getCommands(): array
+    {
+        $commands = [
+            MakeTestCommand::class,
+            InitConfigCommand::class,
+        ];
+
+        if (class_exists('MoonShine\Resources\ModelResource')) {
+            $commands[] = MakeMoonshineTestCommand::class;
+        }
+
+        return $commands;
     }
 }

@@ -1,0 +1,70 @@
+<?php
+
+namespace {{ namespace }};
+
+use Fillincode\Tests\Interfaces\CodeInterface;
+use Fillincode\Tests\Interfaces\DocIgnoreInterface;
+use Fillincode\Tests\Interfaces\ParametersCodeInterface;
+use Fillincode\Tests\Interfaces\ParametersInterface;
+use Tests\Feature\BaseMoonshineTestCase;
+
+class IndexTest extends BaseMoonshineTestCase implements CodeInterface, DocIgnoreInterface, ParametersCodeInterface, ParametersInterface
+{
+    /**
+     * {@inheritDoc}
+     */
+    public function getRouteName(): string
+    {
+        return 'moonshine.resource.page';
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function getMiddleware(): array
+    {
+        return [{{ middlewares }}];
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function getCodes(): array
+    {
+        return [
+            {{ default_codes }}
+        ];
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function getParameters(): array
+    {
+        return [
+            'resourceUri' => '{{ resource_uri }}',
+            'pageUri' => 'index-page',
+        ];
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function getInvalidParameters(): array
+    {
+        return [
+            'resourceUri' => 'invalid-resource',
+            'pageUri' => 'invalid-page',
+        ];
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function getCodesForInvalidParameters(): array
+    {
+        return [
+            {{ default_invalid_param_codes }}
+        ];
+    }
+}

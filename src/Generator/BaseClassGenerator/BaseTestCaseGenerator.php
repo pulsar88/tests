@@ -13,9 +13,11 @@ class BaseTestCaseGenerator extends BaseGenerator
      */
     protected array $users;
 
-    public function __construct()
+    public function __construct(
+        protected string $configKey
+    )
     {
-        $this->users = config("fillincode-tests.feature.users");
+        $this->users = config("fillincode-tests.$this->configKey.users");
     }
 
     /**
@@ -38,6 +40,8 @@ class BaseTestCaseGenerator extends BaseGenerator
             '{{ send_invalid_parameters_from_guest }}',
             '{{ use_test_parser }}',
             '{{ test_parser }}',
+            '{{ class_name }}',
+            '{{ config_key }}',
         ];
 
         $replaces = [
@@ -50,6 +54,8 @@ class BaseTestCaseGenerator extends BaseGenerator
             $this->getSendInvalidParametersFromGuest(),
             $this->getUseTestParser(),
             $this->getTestParserCode(),
+            $this->getClassName(),
+            $this->configKey,
         ];
 
         $stub = $this->stubReplace($searches, $replaces, $stub);
@@ -227,13 +233,18 @@ class BaseTestCaseGenerator extends BaseGenerator
         return "\n" . $this->getStub('base_class.test_parser') . "\n";
     }
 
+    protected function getClassName(): string
+    {
+        return $this->configKey === 'feature' ? 'BaseFeatureTestCase' : 'BaseMoonshineTestCase';
+    }
+
     /**
      * Сохранение файла
      */
     protected function saveClass(string $stub): void
     {
         File::put(
-            "tests{$this->ds}Feature{$this->ds}BaseFeatureTestCase.php", $stub
+            "tests{$this->ds}Feature$this->ds{$this->getClassName()}.php", $stub
         );
     }
 }

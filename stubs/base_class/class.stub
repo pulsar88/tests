@@ -17,8 +17,10 @@ use Fillincode\Tests\Interfaces\ParametersInterface;
 /**
  * Базовый класс для функциональных тестов
  */
-abstract class BaseFeatureTestCase extends BaseFillincodeTestCase
+abstract class {{ class_name }} extends BaseFillincodeTestCase
 {
+    protected string $configKey = '{{ config_key }}';
+
     /**
      * Выполнение запроса
      *

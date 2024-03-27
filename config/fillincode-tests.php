@@ -21,4 +21,25 @@ return [
             'parameters' => 404
         ],
     ],
+
+    'admin_panel' => [
+        'name' => 'moonshine',
+
+        'prefix' => 'admin',
+
+        'users' => [
+            'guest' => '',
+            'admin' => 'moonshine',
+        ],
+
+        'codes' => [
+            'guest' => 401,
+            'admin' => 200,
+        ],
+
+        'invalid' => [
+            'data' => 422,
+            'parameters' => 404
+        ],
+    ]
 ];

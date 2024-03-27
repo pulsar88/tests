@@ -29,7 +29,11 @@ class InitConfigCommand extends Command
      */
     public function handle(): int
     {
-        (new BaseTestCaseGenerator())->generate();
+        (new BaseTestCaseGenerator('feature'))->generate();
+
+        if (config('fillincode-tests.admin_panel.name') === 'moonshine') {
+            (new BaseTestCaseGenerator('admin_panel'))->generate();
+        }
 
         return self::SUCCESS;
     }

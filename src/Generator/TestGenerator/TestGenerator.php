@@ -32,6 +32,7 @@ class TestGenerator extends BaseGenerator
         protected array  $interfaces,
         protected string $route_name,
         protected string $middlewares,
+        protected string $configKey = 'feature',
     )
     {
     }
@@ -49,8 +50,8 @@ class TestGenerator extends BaseGenerator
         $stub = $this->getStub('test.class');
 
         $stub = $this->stubReplace(
-            ['{{ namespace }}', '{{ uses }}', '{{ class }}', '{{ implements }}', '{{ methods }}'],
-            [trim($this->getNamespace()), $this->getUses(), trim($this->getClassName()), $this->getImplements(), $this->getMethods()],
+            ['{{ namespace }}', '{{ extendsClass }}', '{{ uses }}', '{{ class }}', '{{ implements }}', '{{ methods }}'],
+            [trim($this->getNamespace()), $this->getExtendsClass(), $this->getUses(), trim($this->getClassName()), $this->getImplements(), $this->getMethods()],
             $stub
         );
 
@@ -61,7 +62,7 @@ class TestGenerator extends BaseGenerator
 
     protected function getPrefix(): string
     {
-        $prefix = config("fillincode-tests.feature.prefix");
+        $prefix = config("fillincode-tests.$this->configKey.prefix");
 
         return $prefix
             ? str($prefix)->lower()->ucfirst() . '\\'
@@ -78,6 +79,11 @@ class TestGenerator extends BaseGenerator
         }
 
         return "Tests\\Feature\\{$this->getPrefix()}";
+    }
+
+    protected function getExtendsClass(): string
+    {
+        return $this->configKey === 'feature' ? 'BaseFeatureTestCase' : 'BaseMoonshineTestCase';
     }
 
     /**
@@ -184,8 +190,8 @@ class TestGenerator extends BaseGenerator
 
         $result = '';
 
-        foreach (config("fillincode-tests.feature.users") as $user => $guard) {
-            $result .= "'$user' => " . config("fillincode-tests.feature.codes.$user") . ",$this->character";
+        foreach (config("fillincode-tests.$this->configKey.users") as $user => $guard) {
+            $result .= "'$user' => " . config("fillincode-tests.$this->configKey.codes.$user") . ",$this->character";
         }
 
         return $this->stubReplace(
@@ -234,8 +240,8 @@ class TestGenerator extends BaseGenerator
 
         $result = '';
 
-        foreach (config("fillincode-tests.feature.users") as $user => $guard) {
-            $result .= "'$user' => " . config("fillincode-tests.feature.invalid.parameters") . ",$this->character";
+        foreach (config("fillincode-tests.$this->configKey.users") as $user => $guard) {
+            $result .= "'$user' => " . config("fillincode-tests.$this->configKey.invalid.parameters") . ",$this->character";
         }
 
         return $this->stubReplace(
