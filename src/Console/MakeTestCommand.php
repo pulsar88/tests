@@ -30,7 +30,8 @@ class MakeTestCommand extends Command
      *
      * @var string
      */
-    protected $signature = 'fillincode-test:make-test';
+    protected $signature = 'fillincode-test:make-test 
+                            {--A|admin : Создания теста для админки}';
 
     /**
      * The console command description.
@@ -101,10 +102,15 @@ class MakeTestCommand extends Command
             options: $interfaces
         );
 
-        $generator = new TestGenerator($className, $interfaces, $route_name, $middlewares);
+        $generator = new TestGenerator($className, $interfaces, $route_name, $middlewares, $this->getConfigKey());
 
         info(sprintf('class [%s] created successfully.', $generator->generate()));
 
         return self::SUCCESS;
+    }
+
+    protected function getConfigKey(): string
+    {
+        return $this->option('admin') ? 'admin_panel' : 'feature';
     }
 }

@@ -32,7 +32,6 @@ class TestGenerator extends BaseGenerator
         protected array  $interfaces,
         protected string $route_name,
         protected string $middlewares,
-        protected string $prefix = 'Api',
         protected string $configKey = 'feature',
     )
     {
@@ -51,8 +50,8 @@ class TestGenerator extends BaseGenerator
         $stub = $this->getStub('test.class');
 
         $stub = $this->stubReplace(
-            ['{{ namespace }}', '{{ uses }}', '{{ class }}', '{{ implements }}', '{{ methods }}'],
-            [trim($this->getNamespace()), $this->getUses(), trim($this->getClassName()), $this->getImplements(), $this->getMethods()],
+            ['{{ namespace }}', '{{ extendsClass }}', '{{ uses }}', '{{ class }}', '{{ implements }}', '{{ methods }}'],
+            [trim($this->getNamespace()), $this->getExtendsClass(), $this->getUses(), trim($this->getClassName()), $this->getImplements(), $this->getMethods()],
             $stub
         );
 
@@ -63,8 +62,10 @@ class TestGenerator extends BaseGenerator
 
     protected function getPrefix(): string
     {
-        return $this->prefix
-            ? str($this->prefix)->lower()->ucfirst() . '\\'
+        $prefix = config("fillincode-tests.$this->configKey.prefix");
+
+        return $prefix
+            ? str($prefix)->lower()->ucfirst() . '\\'
             : '';
     }
 
@@ -77,7 +78,12 @@ class TestGenerator extends BaseGenerator
             return "Tests\\Feature\\{$this->getPrefix()}" . str($this->className)->beforeLast('/')->replace('/', '\\');
         }
 
-        return 'Tests\\Feature';
+        return "Tests\\Feature\\{$this->getPrefix()}";
+    }
+
+    protected function getExtendsClass(): string
+    {
+        return $this->configKey === 'feature' ? 'BaseFeatureTestCase' : 'BaseMoonshineTestCase';
     }
 
     /**
@@ -279,7 +285,7 @@ class TestGenerator extends BaseGenerator
      */
     protected function setPath(): void
     {
-        $this->path = "tests{$this->ds}Feature$this->ds" .
+        $this->path = "tests{$this->ds}Feature$this->ds" . str_replace('\\', $this->ds, $this->getPrefix()) .
             str($this->className)->replace('/', $this->ds)->value() . '.php';
     }
 
