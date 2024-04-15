@@ -43,7 +43,7 @@ class IndexTest extends BaseMoonshineTestCase implements CodeInterface, DocIgnor
     {
         return [
             'resourceUri' => '{{ resource_uri }}',
-            'pageUri' => 'index-page',
+            'pageUri' => '{{ page_uri }}',
         ];
     }
 

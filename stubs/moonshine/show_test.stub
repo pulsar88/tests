@@ -46,7 +46,7 @@ class DetailTest extends BaseMoonshineTestCase implements CodeInterface, DocIgno
     {
         return [
             'resourceUri' => '{{ resource_uri }}',
-            'pageUri' => 'detail-page',
+            'pageUri' => '{{ page_uri }}',
         ];
     }
 

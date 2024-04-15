@@ -46,7 +46,7 @@ class EditTest extends BaseMoonshineTestCase implements CodeInterface, DocIgnore
     {
         return [
             'resourceUri' => '{{ resource_uri }}',
-            'pageUri' => 'form-page',
+            'pageUri' => '{{ page_uri }}',
         ];
     }
 

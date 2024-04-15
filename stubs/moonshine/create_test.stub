@@ -43,7 +43,7 @@ class CreateTest extends BaseMoonshineTestCase implements CodeInterface, DocIgno
     {
         return [
             'resourceUri' => '{{ resource_uri }}',
-            'pageUri' => 'form-page',
+            'pageUri' => '{{ page_uri }}',
         ];
     }
 

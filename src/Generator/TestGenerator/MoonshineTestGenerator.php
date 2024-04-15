@@ -108,6 +108,7 @@ class MoonshineTestGenerator extends BaseGenerator
             '{{ middlewares }}',
             '{{ default_codes }}',
             '{{ resource_uri }}',
+            '{{ page_uri }}',
             '{{ default_invalid_param_codes }}',
             ...match ($this->type) {
                 'store', 'update' => [
@@ -129,6 +130,7 @@ class MoonshineTestGenerator extends BaseGenerator
             $this->makeMiddlewares(),
             $this->makeDefaultCodes(),
             $this->makeResourceUri(),
+            $this->makePageUri(),
             $this->makeDefaultInvalidParamCodes(),
             ...match ($this->type) {
                 'store', 'update' => [
@@ -151,6 +153,16 @@ class MoonshineTestGenerator extends BaseGenerator
     protected function makeResourceUri(): string
     {
         return str($this->resourceName)->snake('-');
+    }
+
+    protected function makePageUri(): string
+    {
+        return match ($this->type) {
+            'index' => $this->resource->getPages()->indexPage()->uriKey(),
+            'show' => $this->resource->getPages()->detailPage()->uriKey(),
+            'create', 'edit' => $this->resource->getPages()->formPage()->uriKey(),
+            default => '',
+        };
     }
 
     protected function makeMiddlewares(): string
