@@ -2,8 +2,6 @@
 
 namespace Fillincode\Tests\Helpers;
 
-use Illuminate\Http\UploadedFile;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 
 class MakeValidDataHelper
@@ -174,21 +172,21 @@ class MakeValidDataHelper
         }
     }
 
-    protected function makeValue(): mixed
+    protected function makeValue(): string
     {
         return match ($this->type) {
-            'table_exists' => DB::table($this->exists['table'])->select($this->exists['key'])->first()->{$this->exists['key']},
-            'enum' => '\'' . trim(collect($this->in)->random(), "\"") . '\'',
-            'email' => '\'' . fake()->email() . '\'',
-            'string' => '"' . str(fake()->realTextBetween($this->min, $this->max))->replace('"', '\'') . '"',
-            'integer' => fake()->numberBetween($this->min, $this->max),
-            'boolean' => fake()->numberBetween(0,1),
-            'file' => UploadedFile::fake()->create('file.docs'),
-            'image' => UploadedFile::fake()->image('image.png'),
-            'date' => '\'' . now()->subYears(5)->format('Y-m-d') . '\'',
+            'table_exists' => "\Illuminate\Support\Facades\DB::table('{$this->exists['table']}')->select('{$this->exists['key']}')->limit(1)->value('{$this->exists['key']}')",
+            'enum' => 'collect(['.implode(',', $this->in).'])->random()',
+            'email' => 'fake()->email()',
+            'string' => "fake()->realTextBetween($this->min, $this->max)",
+            'integer' => "fake()->numberBetween($this->min, $this->max)",
+            'boolean' => 'fake()->numberBetween(0,1)',
+            'file' => 'fake()->file',
+            'image' => 'fake()->image',
+            'date' => "now()->subYears(5)->format('Y-m-d')",
             'array' => '[]',
-            'undefined' => str($this->key)->contains('id') ? 1 : '\'' . Str::random(12) . '\'',
-            'password' =>  '\'' . Str::password() . '\'',
+            'undefined' => "str('$this->key')->contains('id') ? 1 : \Illuminate\Support\Str::random(12)",
+            'password' =>  "'".str(Str::password())."'",
             default => '\'\'',
         };
     }
