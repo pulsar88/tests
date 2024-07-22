@@ -145,10 +145,10 @@ public function getAdmin(): User
 2. Реализовать метод getCodes
 
 ```php
-use Fillincode\Tests\Interfaces\CodeInterface;
+use Fillincode\Tests\Contracts\CodeContract;
 use Tests\Feature\BaseFeatureTestCase;
 
-class ExampleTest extends BaseFeatureTestCase implements CodeInterface
+class ExampleTest extends BaseFeatureTestCase implements CodeContract
 {
     /**
      * {@inheritDoc}
@@ -171,10 +171,10 @@ class ExampleTest extends BaseFeatureTestCase implements CodeInterface
 2. Реализовать метод getCodesForInvalidParameters
 
 ```php
-use Fillincode\Tests\Interfaces\ParametersCodeInterface;
+use Fillincode\Tests\Contracts\ParametersCodeContract;
 use Tests\Feature\BaseFeatureTestCase;
 
-class ExampleTest extends BaseFeatureTestCase implements ParametersCodeInterface
+class ExampleTest extends BaseFeatureTestCase implements ParametersCodeContract
 {
     /**
      * {@inheritDoc}
@@ -199,10 +199,10 @@ class ExampleTest extends BaseFeatureTestCase implements ParametersCodeInterface
 Первый метод должен вернуть корректные параметры адресной строки, второй метод должен вернуть некорректные параметры адресной строки
 
 ```php
-use Fillincode\Tests\Interfaces\ParametersInterface;
+use Fillincode\Tests\Contracts\ParametersContract;
 use Tests\Feature\BaseFeatureTestCase;
 
-class ExampleTest extends BaseFeatureTestCase implements ParametersInterface
+class ExampleTest extends BaseFeatureTestCase implements ParametersContract
 {
     /**
      * {@inheritDoc}
@@ -234,10 +234,10 @@ class ExampleTest extends BaseFeatureTestCase implements ParametersInterface
 Первый метод должен вернуть валидные данные, второй метод должен вернуть невалидные данные
 
 ```php
-use Fillincode\Tests\Interfaces\ValidateInterface;
+use Fillincode\Tests\Contracts\ValidateContract;
 use Tests\Feature\BaseFeatureTestCase;
 
-class ExampleTest extends BaseFeatureTestCase implements ValidateInterface
+class ExampleTest extends BaseFeatureTestCase implements ValidateContract
 {
     /**
      * {@inheritDoc}
@@ -269,10 +269,10 @@ class ExampleTest extends BaseFeatureTestCase implements ValidateInterface
 2. Реализовать метод db_seed. В этом методе нужно будет выполнить логику заполнения данными БД
 
 ```php
-use Fillincode\Tests\Interfaces\SeedInterface;
+use Fillincode\Tests\Contracts\SeedContract;
 use Tests\Feature\BaseFeatureTestCase;
 
-class ExampleTest extends BaseFeatureTestCase implements SeedInterface
+class ExampleTest extends BaseFeatureTestCase implements SeedContract
 {
     /**
      * {@inheritDoc}
@@ -291,10 +291,10 @@ class ExampleTest extends BaseFeatureTestCase implements SeedInterface
 Для теста, который реализует этот интерфейс автоматически будет создано фейковое public хранилище
 
 ```php
-use Fillincode\Tests\Interfaces\FakeStorageInterface;
+use Fillincode\Tests\Contracts\FakeStorageContract;
 use Tests\Feature\BaseFeatureTestCase;
 
-class ExampleTest extends BaseFeatureTestCase implements FakeStorageInterface
+class ExampleTest extends BaseFeatureTestCase implements FakeStorageContract
 {
     
 }
@@ -306,10 +306,10 @@ class ExampleTest extends BaseFeatureTestCase implements FakeStorageInterface
 2. Реализовать метод getMockAction
 
 ```php
-use Fillincode\Tests\Interfaces\MockInterface;
+use Fillincode\Tests\Contracts\MockContract;
 use Tests\Feature\BaseFeatureTestCase;
 
-class ExampleTest extends BaseFeatureTestCase implements MockInterface
+class ExampleTest extends BaseFeatureTestCase implements MockContract
 {
     /**
      * {@inheritDoc}
@@ -331,9 +331,9 @@ class ExampleTest extends BaseFeatureTestCase implements MockInterface
 ```php
 
 use Tests\Feature\BaseFeatureTestCase;
-use Fillincode\Tests\Interfaces\NotificationTestInterface;
+use Fillincode\Tests\Contracts\NotificationContract;
 
-class ExampleTest extends BaseFeatureTestCase implements NotificationTestInterface
+class ExampleTest extends BaseFeatureTestCase implements NotificationContract
 {
     /**
      * {@inheritDoc}
@@ -364,9 +364,9 @@ class ExampleTest extends BaseFeatureTestCase implements NotificationTestInterfa
 ```php
 
 use Tests\Feature\BaseFeatureTestCase;
-use Fillincode\Tests\Interfaces\JobTestInterface;
+use Fillincode\Tests\Contracts\JobContract;
 
-class ExampleTest extends BaseFeatureTestCase implements JobTestInterface
+class ExampleTest extends BaseFeatureTestCase implements JobContract
 {
     /**
      * {@inheritDoc}
@@ -387,7 +387,7 @@ class ExampleTest extends BaseFeatureTestCase implements JobTestInterface
 1. Необходимо имплементировать интерфейс Fillincode/Tests/Interfaces/DocIgnoreInterface
 
     ```php
-    use Fillincode\Tests\Interfaces\DocIgnoreInterface;
+    use Fillincode\Tests\Contracts\DocIgnoreInterface;
     use Tests\Feature\BaseFeatureTestCase;
     
     class ExampleTest extends BaseFeatureTestCase implements DocIgnoreInterface
@@ -445,16 +445,16 @@ class ExampleTest extends BaseFeatureTestCase
 
 ```php
 use Tests\Feature\BaseFeatureTestCase;
-use Fillincode\Tests\Interfaces\CodeInterface;
-use Fillincode\Tests\Interfaces\ParametersCodeInterface;
-use Fillincode\Tests\Interfaces\ParametersInterface;
-use Fillincode\Tests\Interfaces\ValidateInterface;
-use Fillincode\Tests\Interfaces\SeedInterface;
-use Fillincode\Tests\Interfaces\FakeStorageInterface;
-use Fillincode\Tests\Interfaces\MockInterface;
-use Fillincode\Tests\Interfaces\DocIgnoreInterface;
+use Fillincode\Tests\Contracts\CodeContract;
+use Fillincode\Tests\Contracts\ParametersCodeContract;
+use Fillincode\Tests\Contracts\ParametersContract;
+use Fillincode\Tests\Contracts\ValidateContract;
+use Fillincode\Tests\Contracts\SeedContract;
+use Fillincode\Tests\Contracts\FakeStorageContract;
+use Fillincode\Tests\Contracts\MockContract;
+use Fillincode\Tests\Contracts\DocIgnoreContract;
 
-class ExampleTest extends BaseFeatureTestCase implements CodeInterface, ParametersCodeInterface, ParametersInterface, ValidateInterface, SeedInterface, FakeStorageInterface, MockInterface, DocIgnoreInterface
+class ExampleTest extends BaseFeatureTestCase implements CodeContract, ParametersCodeContract, ParametersContract, ValidateContract, SeedContract, FakeStorageContract, MockContract, DocIgnoreContract
 {
     /**
      * {@inheritDoc}

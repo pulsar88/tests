@@ -1,0 +1,9 @@
+    /**
+    * {@inheritDoc}
+    */
+    public function getNotValidData(): array
+    {
+        return [
+            {{ data }}
+        ];
+    }

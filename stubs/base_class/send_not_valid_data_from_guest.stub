@@ -1,0 +1,16 @@
+/**
+     * Sending invalid data from a guest
+     *
+     * @throws ReflectionException
+     */
+    public function testSendFromGuestNotValidData(): void
+    {
+        if (! $this->checkContract(ValidateContract::class)) {
+            $this->markTestSkipped('Тест пропущен, так как вызываемый класс не реализует интерфейс передачи невалидных данных');
+        }
+
+        $this->callRouteAction(
+            $this->getInvalidData(),
+            $this->getParameters()
+        )->assertStatus($this->getInvalidDataCode('guest'));
+    }

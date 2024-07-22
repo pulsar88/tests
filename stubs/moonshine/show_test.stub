@@ -1,0 +1,60 @@
+<?php
+
+namespace {{ namespace }};
+
+use Fillincode\Tests\Interfaces\CodeContract;
+use Fillincode\Tests\Interfaces\DocIgnoreContract;
+use Fillincode\Tests\Interfaces\ParametersContract;
+use Fillincode\Tests\Interfaces\ValidateContract;
+use Illuminate\Support\Facades\DB;
+use Tests\Feature\BaseMoonshineTestCase;
+
+class DetailTest extends BaseMoonshineTestCase implements CodeContract, DocIgnoreContract, ParametersContract, ValidateContract
+{
+    /**
+     * {@inheritDoc}
+     */
+    public function getRouteName(): string
+    {
+        return 'moonshine.resource.page';
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function getMiddleware(): array
+    {
+        return [{{ middlewares }}];
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function codes(): array
+    {
+        return [
+            {{ default_codes }}
+        ];
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function parameters(): array
+    {
+        return [
+            'resourceUri' => '{{ resource_uri }}',
+            'pageUri' => '{{ page_uri }}',
+        ];
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function validData(): array
+    {
+        return [
+            'resourceItem' => {{ resource_item }}
+        ];
+    }
+}

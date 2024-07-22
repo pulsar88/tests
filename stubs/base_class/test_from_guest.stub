@@ -1,0 +1,15 @@
+/**
+     * Fulfilling a request from a guest
+     *
+     * @throws ReflectionException
+     */
+    public function testFromGuest(): void
+    {
+        $this->callRouteAction(
+            $this->getValidData(),
+            $this->getParameters()
+        )->assertStatus($this->getCode('guest'));
+
+        $this->callJobCheckMethod('guest');
+        $this->callNotifyTestMethod('guest');
+    }

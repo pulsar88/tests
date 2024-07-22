@@ -1,0 +1,11 @@
+<?php
+
+namespace {{ namespace }};
+
+use Tests\Feature\{{ extendsClass }};
+{{ uses }}
+
+class {{ class }} extends {{ extendsClass }} {{ implements }}
+{
+    {{ methods }}
+}

@@ -1,0 +1,17 @@
+/**
+     * Sending invalid data from an authorized {{ studly_name }}
+     *
+     * @throws ReflectionException
+     */
+    public function testSendFrom{{ studly_name }}NotValidData(): void
+    {
+        if (! $this->checkContract(ValidateContract::class)) {
+            $this->markTestSkipped('Тест пропущен, так как вызываемый класс не реализует интерфейс передачи невалидных данных');
+        }
+
+        $this->callAuthorizedBy{{ studly_name }}RouteAction(
+            $this->get{{ studly_name }}(),
+            $this->getInvalidData(),
+            $this->getParameters()
+        )->assertStatus($this->getInvalidDataCode('{{ name }}'));
+    }

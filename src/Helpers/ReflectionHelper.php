@@ -8,6 +8,7 @@ use Illuminate\Routing\Route;
 use ReflectionParameter;
 use stdClass;
 use Illuminate\Foundation\Http\FormRequest;
+use TypeError;
 
 class ReflectionHelper
 {
@@ -55,7 +56,7 @@ class ReflectionHelper
                 $keys = array_keys(
                     $formRequestReflectionClass->getMethod('rules')->invoke($instance)
                 );
-            } catch (\TypeError $exception) {
+            } catch (TypeError $exception) {
             }
 
 

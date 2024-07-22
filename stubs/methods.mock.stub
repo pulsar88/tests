@@ -1,7 +1,0 @@
-    /**
-     * {@inheritDoc}
-     */
-    public function getMockAction(): void
-    {
-        //
-    }

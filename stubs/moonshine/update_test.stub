@@ -1,0 +1,59 @@
+<?php
+
+namespace {{ namespace }};
+
+use Fillincode\Tests\Interfaces\CodeContract;
+use Fillincode\Tests\Interfaces\DocIgnoreContract;
+use Fillincode\Tests\Interfaces\ParametersContract;
+use Fillincode\Tests\Interfaces\ValidateContract;
+use Tests\Feature\BaseMoonshineTestCase;
+
+class EditProcessTest extends BaseMoonshineTestCase implements CodeContract, DocIgnoreContract, ParametersContract, ValidateContract
+{
+    /**
+     * {@inheritDoc}
+     */
+    public function getRouteName(): string
+    {
+        return 'moonshine.crud.update';
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function getMiddleware(): array
+    {
+        return [{{ middlewares }}];
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function codes(): array
+    {
+        return [
+            {{ default_codes }}
+        ];
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function parameters(): array
+    {
+        return [
+            'resourceUri' => '{{ resource_uri }}',
+            'resourceItem' => {{ resource_item }},
+        ];
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function validData(): array
+    {
+        return [
+            {{ validation_data }}
+        ];
+    }
+}

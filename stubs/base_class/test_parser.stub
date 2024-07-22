@@ -1,0 +1,3 @@
+        if (! $this->checkContract(DocIgnoreContract::class)) {
+            (new TestParser())->makeAutoDoc($testResponse);
+        }

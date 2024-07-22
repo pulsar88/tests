@@ -1,0 +1,9 @@
+    /**
+     * {@inheritDoc}
+     */
+    public function validData(string $user_key): array
+    {
+        return [
+            {{ data }}
+        ];
+    }

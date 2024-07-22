@@ -1,0 +1,7 @@
+    /**
+     * {@inheritDoc}
+     */
+    public function jobs(string $user_type): void
+    {
+        //
+    }

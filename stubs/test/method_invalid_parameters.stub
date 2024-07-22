@@ -1,0 +1,9 @@
+    /**
+     * {@inheritDoc}
+     */
+    public function invalidParameters(string $user_key): array
+    {
+        return [
+            {{ parameters }}
+        ];
+    }

@@ -2,6 +2,7 @@
 
 namespace Fillincode\Tests\Generator;
 
+use Illuminate\Contracts\Filesystem\FileNotFoundException;
 use Illuminate\Support\Facades\File;
 
 class BaseGenerator
@@ -11,13 +12,19 @@ class BaseGenerator
      */
     protected string $character = "\n\t\t\t";
 
+    protected string $ds = DIRECTORY_SEPARATOR;
+
     /**
      * Возвращает необходимый stub
+     *
+     * @throws FileNotFoundException
      */
     protected function getStub(string $stub): string
     {
+        $stub = str($stub)->replace('.', $this->ds);
+
         return File::get(
-            __DIR__ . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . 'stubs' . DIRECTORY_SEPARATOR . $stub . '.stub'
+            __DIR__ . "$this->ds..$this->ds..{$this->ds}stubs$this->ds$stub.stub"
         );
     }
 

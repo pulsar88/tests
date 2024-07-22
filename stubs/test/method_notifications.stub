@@ -1,0 +1,7 @@
+    /**
+     * {@inheritDoc}
+     */
+    public function notifications(string $user_key): void
+    {
+        //
+    }

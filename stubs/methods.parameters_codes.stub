@@ -1,9 +1,0 @@
-    /**
-     * {@inheritDoc}
-     */
-    public function getCodesForInvalidParameters(): array
-    {
-        return [
-            {{ default_codes }}
-        ];
-    }

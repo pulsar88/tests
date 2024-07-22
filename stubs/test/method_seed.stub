@@ -1,0 +1,7 @@
+    /**
+     * {@inheritDoc}
+     */
+    public function seeder(string $user_key): void
+    {
+        //
+    }

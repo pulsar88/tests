@@ -1,9 +1,0 @@
-    /**
-     * {@inheritDoc}
-     */
-    public function getCodes(): array
-    {
-        return [
-            {{ default_codes }}
-        ];
-    }
