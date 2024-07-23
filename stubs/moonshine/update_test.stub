@@ -6,6 +6,7 @@ use Fillincode\Tests\Contracts\CodeContract;
 use Fillincode\Tests\Contracts\DocIgnoreContract;
 use Fillincode\Tests\Contracts\ParametersContract;
 use Fillincode\Tests\Contracts\ValidateContract;
+use Illuminate\Support\Facades\DB;
 use Tests\Feature\BaseAdminPanelTestCase;
 
 class EditProcessTest extends BaseAdminPanelTestCase implements CodeContract, DocIgnoreContract, ParametersContract, ValidateContract
