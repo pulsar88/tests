@@ -208,7 +208,7 @@ abstract class BaseFillincodeTestCase extends TestCase
     public function callSeedMethod(string $user_key): void
     {
         if ($this->checkContract(SeedContract::class)) {
-            $this->seeder($user_key);
+            $this->dbSeed($user_key);
         }
     }
 }

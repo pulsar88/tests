@@ -7,5 +7,5 @@ interface SeedContract
     /**
      * Данные, которыми будет заполнена БД перед запросом
      */
-    public function seeder(string $user_key): void;
+    public function dbSeed(string $user_key): void;
 }
