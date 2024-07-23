@@ -184,7 +184,7 @@ class MakeValidDataHelper
             'date' => "now()->subYears(5)->format('Y-m-d')",
             'array' => '[]',
             'undefined' => "str('$this->key')->contains('id') ? 1 : \Illuminate\Support\Str::random(12)",
-            'password' =>  '\Illuminate\Support\Str::password()',
+            'password' =>  '"' . str(\Illuminate\Support\Str::password())->replace(['$', '""'], '')->value() . '"',
             default => "''",
         };
     }
