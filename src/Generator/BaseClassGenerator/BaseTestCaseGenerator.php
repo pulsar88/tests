@@ -109,7 +109,7 @@ class BaseTestCaseGenerator extends BaseGenerator
                     ['{{ studly_name }}', '{{ name }}'],
                     [str($user)->studly(), $user],
                     $stub
-                );
+                ) . "\n\n\t";
             }
         }
 
