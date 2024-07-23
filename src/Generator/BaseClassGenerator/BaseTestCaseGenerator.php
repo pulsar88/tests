@@ -85,11 +85,11 @@ class BaseTestCaseGenerator extends BaseGenerator
                 $result .= $this->stubReplace(
                         ['{{ name }}', '{{ user_key }}', '{{ auth }}',],
                         [str($user)->studly(), $user, $auth],
-                        $stub) . "\n\t";
+                        $stub) . "\n\n\t";
             }
         }
 
-        return rtrim($result, "\n\t");
+        return rtrim($result, "\n\n\t");
     }
 
     /**
