@@ -100,7 +100,7 @@ abstract class BaseFillincodeTestCase extends TestCase
     protected function getCode(string $user_key): int
     {
         return $this->checkContract(CodeContract::class)
-            ? $this->getCodeFromArray($this->codes(), $user_key)
+            ? $this->getCodeFromArray($this->codes($user_key), $user_key)
             : ConfigHelper::get($this->group, $this->prefix, "codes.valid.$user_key");
     }
 
