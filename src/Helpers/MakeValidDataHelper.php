@@ -176,7 +176,7 @@ class MakeValidDataHelper
             'table_exists' => "\Illuminate\Support\Facades\DB::table('{$this->exists['table']}')->select('{$this->exists['key']}')->limit(1)->value('{$this->exists['key']}')",
             'enum' => 'collect(['.implode(',', $this->in).'])->random()',
             'email' => 'fake()->email()',
-            'string' => "str(fake()->realTextBetween($this->min, $this->max))->replace([\"'\", ';', '  ', ], '')->limit($this->max, '')",
+            'string' => "str(fake()->realTextBetween($this->min, $this->max))->replace([\"'\", ';', '  ', '\"'], '')->limit($this->max, '')",
             'integer' => "fake()->numberBetween($this->min, $this->max)",
             'boolean' => 'fake()->numberBetween(0,1)',
             'file' => 'fake()->file',
