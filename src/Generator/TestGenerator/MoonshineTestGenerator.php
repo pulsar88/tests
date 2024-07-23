@@ -110,7 +110,11 @@ class MoonshineTestGenerator extends BaseGenerator
             '{{ resource_uri }}',
             '{{ page_uri }}',
             ...match ($this->type) {
-                'store', 'update' => [
+                'update' => [
+                    '{{ validation_data }}',
+                    '{{ resource_item }}'
+                ],
+                'store', => [
                     '{{ validation_data }}',
                 ],
                 'show', 'edit', 'destroy' => [
@@ -130,7 +134,11 @@ class MoonshineTestGenerator extends BaseGenerator
             $this->makeResourceUri(),
             $this->makePageUri(),
             ...match ($this->type) {
-                'store', 'update' => [
+                'update' => [
+                    $this->makeValidationData(),
+                    "DB::table('{$this->resource->getModel()->getTable()}')->first()->id"
+                ],
+                'store', => [
                     $this->makeValidationData(),
                 ],
                 'show', 'edit', 'destroy' => [

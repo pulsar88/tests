@@ -29,7 +29,7 @@ class RemoveTest extends BaseAdminPanelTestCase implements CodeContract, DocIgno
     /**
      * {@inheritDoc}
      */
-    public function codes(): array
+    public function codes(string $user_key): array
     {
         return [
             {{ default_codes }}
@@ -39,7 +39,7 @@ class RemoveTest extends BaseAdminPanelTestCase implements CodeContract, DocIgno
     /**
      * {@inheritDoc}
      */
-    public function parameters(): array
+    public function parameters(string $user_key): array
     {
         return [
             'resourceUri' => '{{ resource_uri }}',

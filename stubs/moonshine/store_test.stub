@@ -29,7 +29,7 @@ class CreateProcessTest extends BaseAdminPanelTestCase implements CodeContract, 
     /**
      * {@inheritDoc}
      */
-    public function codes(): array
+    public function codes(string $user_key): array
     {
         return [
             {{ default_codes }}
@@ -39,7 +39,7 @@ class CreateProcessTest extends BaseAdminPanelTestCase implements CodeContract, 
     /**
      * {@inheritDoc}
      */
-    public function parameters(): array
+    public function parameters(string $user_key): array
     {
         return [
             'resourceUri' => '{{ resource_uri }}',
@@ -49,7 +49,7 @@ class CreateProcessTest extends BaseAdminPanelTestCase implements CodeContract, 
     /**
      * @inheritDoc
      */
-    public function validData(): array
+    public function validData(string $user_key): array
     {
         return [
             {{ validation_data }}

@@ -30,7 +30,7 @@ class DetailTest extends BaseAdminPanelTestCase implements CodeContract, DocIgno
     /**
      * {@inheritDoc}
      */
-    public function codes(): array
+    public function codes(string $user_key): array
     {
         return [
             {{ default_codes }}
@@ -40,7 +40,7 @@ class DetailTest extends BaseAdminPanelTestCase implements CodeContract, DocIgno
     /**
      * {@inheritDoc}
      */
-    public function parameters(): array
+    public function parameters(string $user_key): array
     {
         return [
             'resourceUri' => '{{ resource_uri }}',
@@ -51,7 +51,7 @@ class DetailTest extends BaseAdminPanelTestCase implements CodeContract, DocIgno
     /**
      * @inheritDoc
      */
-    public function validData(): array
+    public function validData(string $user_key): array
     {
         return [
             'resourceItem' => {{ resource_item }}
