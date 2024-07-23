@@ -9,14 +9,10 @@ use Fillincode\Tests\Generator\BaseGenerator;
 
 class BaseTestCaseGenerator extends BaseGenerator
 {
-    /**
-     * Типы пользователей
-     */
-    protected array $users;
-
     public function __construct(
         protected string $group,
-        protected ?string $configKey = null
+        protected ?string $configKey = null,
+        protected array $users = [],
     )
     {
         $this->users = ConfigHelper::get($this->group, $this->configKey, 'users');
@@ -237,7 +233,7 @@ class BaseTestCaseGenerator extends BaseGenerator
 
     protected function getClassName(): string
     {
-        return $this->configKey === 'feature' ? 'BaseFeatureTestCase' : 'BaseMoonshineTestCase';
+        return 'Base' . str($this->configKey)->studly() . 'testCase';
     }
 
     /**

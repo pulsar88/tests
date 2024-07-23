@@ -109,11 +109,9 @@ class MoonshineTestGenerator extends BaseGenerator
             '{{ default_codes }}',
             '{{ resource_uri }}',
             '{{ page_uri }}',
-            '{{ default_invalid_param_codes }}',
             ...match ($this->type) {
                 'store', 'update' => [
                     '{{ validation_data }}',
-                    '{{ invalidation_data }}',
                 ],
                 'show', 'edit', 'destroy' => [
                     '{{ resource_item }}'
@@ -131,11 +129,9 @@ class MoonshineTestGenerator extends BaseGenerator
             $this->makeDefaultCodes(),
             $this->makeResourceUri(),
             $this->makePageUri(),
-            $this->makeDefaultInvalidParamCodes(),
             ...match ($this->type) {
                 'store', 'update' => [
                     $this->makeValidationData(),
-                    $this->makeInvalidationData(),
                 ],
                 'show', 'edit', 'destroy' => [
                     "DB::table('{$this->resource->getModel()->getTable()}')->first()->id"
@@ -147,7 +143,7 @@ class MoonshineTestGenerator extends BaseGenerator
 
     protected function makeNamespace(): string
     {
-        return "Tests\\Feature\\{$this->getPrefix('\\')}" . str($this->resourceName)->replace('Resource', '');
+        return 'Tests\\Feature\\AdminPanel\\' . str($this->resourceName)->replace('Resource', '');
     }
 
     protected function makeResourceUri(): string
@@ -176,22 +172,6 @@ class MoonshineTestGenerator extends BaseGenerator
         return rtrim(trim($result), ',');
     }
 
-    protected function makeDefaultInvalidParamCodes(): string
-    {
-        $result = '';
-
-        foreach (config('fillincode-tests.admin_panel.users') as $user => $guard) {
-            if ($user === 'guest') {
-                $result .= "'$user' => 401," . $this->character;
-                continue;
-            }
-
-            $result .= "'$user' => " . config('fillincode-tests.admin_panel.invalid.parameters') . ',' . $this->character;
-        }
-
-        return rtrim($result, ",$this->character");
-    }
-
     protected function makeDefaultCodes(): string
     {
         $result = '';
@@ -218,27 +198,9 @@ class MoonshineTestGenerator extends BaseGenerator
         return rtrim($result, ",$this->character");
     }
 
-    protected function makeInvalidationData(): string
-    {
-        $result = '';
-
-        foreach ($this->resource->rules($this->resource->getItemOrInstance()) ?? [] as $key => $value) {
-            $result .= "'$key' => '',\n\t\t\t";
-        }
-
-        return rtrim($result, ",$this->character");
-    }
-
-    protected function getPrefix(string $replace): string
-    {
-        $prefix = config('fillincode-tests.admin_panel.prefix');
-
-        return $prefix ? str($prefix)->lower()->ucfirst() . $replace : '';
-    }
-
     protected function saveClass(string $stub): void
     {
-        $path = "tests{$this->ds}Feature$this->ds{$this->getPrefix($this->ds)}"
+        $path = "tests{$this->ds}Feature{$this->ds}AdminPanel$this->ds"
             . str($this->resourceName)->replace('Resource', '') . $this->ds
             . $this->classNames[$this->type] . '.php';
 

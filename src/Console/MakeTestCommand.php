@@ -2,17 +2,20 @@
 
 namespace Fillincode\Tests\Console;
 
+use Fillincode\Tests\Contracts\CodeContract;
+use Fillincode\Tests\Contracts\DocIgnoreContract;
+use Fillincode\Tests\Contracts\FakeStorageContract;
+use Fillincode\Tests\Contracts\InvalidateCodeContract;
+use Fillincode\Tests\Contracts\InvalidateContract;
+use Fillincode\Tests\Contracts\InvalidParametersCodeContract;
+use Fillincode\Tests\Contracts\InvalidParametersContract;
+use Fillincode\Tests\Contracts\JobContract;
+use Fillincode\Tests\Contracts\MockContract;
+use Fillincode\Tests\Contracts\NotificationContract;
+use Fillincode\Tests\Contracts\ParametersContract;
+use Fillincode\Tests\Contracts\SeedContract;
+use Fillincode\Tests\Contracts\ValidateContract;
 use Fillincode\Tests\Generator\TestGenerator\TestGenerator;
-use Fillincode\Tests\Interfaces\CodeInterface;
-use Fillincode\Tests\Interfaces\DocIgnoreInterface;
-use Fillincode\Tests\Interfaces\JobTestInterface;
-use Fillincode\Tests\Interfaces\NotificationTestInterface;
-use Fillincode\Tests\Interfaces\SeedInterface;
-use Fillincode\Tests\Interfaces\FakeStorageInterface;
-use Fillincode\Tests\Interfaces\MockInterface;
-use Fillincode\Tests\Interfaces\ParametersCodeInterface;
-use Fillincode\Tests\Interfaces\ParametersInterface;
-use Fillincode\Tests\Interfaces\ValidateInterface;
 use Illuminate\Console\Command;
 use Illuminate\Contracts\Filesystem\FileNotFoundException;
 use Illuminate\Support\Facades\Route;
@@ -31,7 +34,8 @@ class MakeTestCommand extends Command
      * @var string
      */
     protected $signature = 'fillincode-test:make-test 
-                            {--A|admin : Создания теста для админки}';
+                            {--A|admin : Создания теста для админки}
+                            {group? : Определение группы тестов}';
 
     /**
      * The console command description.
@@ -81,36 +85,46 @@ class MakeTestCommand extends Command
             implode(', ', $route->middleware() ?? [])
         );
 
-        $interfaces = [
-            CodeInterface::class,
-            FakeStorageInterface::class,
-            ParametersInterface::class,
-            ParametersCodeInterface::class,
-            ValidateInterface::class,
-            SeedInterface::class,
-            NotificationTestInterface::class,
-            JobTestInterface::class,
-            MockInterface::class,
+        $contracts = [
+            CodeContract::class,
+            ValidateContract::class,
+            InvalidateContract::class,
+            InvalidateCodeContract::class,
+            ParametersContract::class,
+            InvalidParametersContract::class,
+            InvalidParametersCodeContract::class,
+            SeedContract::class,
+            FakeStorageContract::class,
+            JobContract::class,
+            MockContract::class,
+            NotificationContract::class,
         ];
 
         if (class_exists('Fillincode\Swagger\Parser\TestParser')) {
-            $interfaces[] = DocIgnoreInterface::class;
+            $contracts[] = DocIgnoreContract::class;
         }
 
-        $interfaces = multiselect(
+        $contracts = multiselect(
             label: 'Выберите интерфейсы, которые должен будет реализовать тест',
-            options: $interfaces
+            options: $contracts
         );
 
-        $generator = new TestGenerator($className, $interfaces, $route_name, $middlewares, $this->getConfigKey());
+        $generator = new TestGenerator(
+            $className, $contracts, $route_name, $middlewares, $this->getGroup(), $this->getPrefix()
+        );
 
         info(sprintf('class [%s] created successfully.', $generator->generate()));
 
         return self::SUCCESS;
     }
 
-    protected function getConfigKey(): string
+    protected function getGroup(): string
     {
-        return $this->option('admin') ? 'admin_panel' : 'feature';
+        return $this->option('admin') ? 'admin_panel' : 'app';
+    }
+
+    protected function getPrefix(): ?string
+    {
+        return $this->option('admin') ? null : $this->argument('group');
     }
 }

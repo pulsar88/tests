@@ -3,16 +3,20 @@
 namespace Fillincode\Tests\Generator\TestGenerator;
 
 use Error;
+use Fillincode\Tests\Helpers\ConfigHelper;
 use Fillincode\Tests\Helpers\ReflectionHelper;
 use Fillincode\Tests\Helpers\RouteHelper;
-use Fillincode\Tests\Interfaces\CodeInterface;
-use Fillincode\Tests\Interfaces\JobTestInterface;
-use Fillincode\Tests\Interfaces\NotificationTestInterface;
-use Fillincode\Tests\Interfaces\SeedInterface;
-use Fillincode\Tests\Interfaces\MockInterface;
-use Fillincode\Tests\Interfaces\ParametersCodeInterface;
-use Fillincode\Tests\Interfaces\ParametersInterface;
-use Fillincode\Tests\Interfaces\ValidateInterface;
+use Fillincode\Tests\Contracts\CodeContract;
+use Fillincode\Tests\Contracts\InvalidateCodeContract;
+use Fillincode\Tests\Contracts\InvalidateContract;
+use Fillincode\Tests\Contracts\InvalidParametersCodeContract;
+use Fillincode\Tests\Contracts\InvalidParametersContract;
+use Fillincode\Tests\Contracts\JobContract;
+use Fillincode\Tests\Contracts\MockContract;
+use Fillincode\Tests\Contracts\NotificationContract;
+use Fillincode\Tests\Contracts\ParametersContract;
+use Fillincode\Tests\Contracts\SeedContract;
+use Fillincode\Tests\Contracts\ValidateContract;
 use Fillincode\Tests\Generator\BaseGenerator;
 use Illuminate\Contracts\Filesystem\FileNotFoundException;
 use Illuminate\Support\Facades\File;
@@ -23,18 +27,28 @@ use ReflectionException;
 class TestGenerator extends BaseGenerator
 {
     /**
-     * Путь к файлу
+     * @param string $className Название класса
+     * @param array $contracts Контракты, которые имплементируют класс теста
+     * @param string $route_name Имя маршрута
+     * @param string $middlewares Миделвары маршрута
+     * @param string $group Группа тестов
+     * @param string|null $prefix Префикс тестов
+     * @param string|null $configKey Ключ конфигурации
+     * @param string|null $path Путь к файлу
      */
-    protected string $path;
-
     public function __construct(
-        protected string $className,
-        protected array  $interfaces,
-        protected string $route_name,
-        protected string $middlewares,
-        protected string $configKey = 'feature',
+        protected string  $className,
+        protected array   $contracts,
+        protected string  $route_name,
+        protected string  $middlewares,
+        protected string  $group,
+        protected ?string $prefix = null,
+        protected ?string $configKey = null,
+        protected ?string $path = null,
     )
     {
+        $this->configKey = $this->prefix;
+        $this->prefix = str($this->prefix ?: $this->group)->lower()->studly() . '\\';
     }
 
     /**
@@ -60,30 +74,21 @@ class TestGenerator extends BaseGenerator
         return $this->path;
     }
 
-    protected function getPrefix(): string
-    {
-        $prefix = config("fillincode-tests.$this->configKey.prefix");
-
-        return $prefix
-            ? str($prefix)->lower()->ucfirst() . '\\'
-            : '';
-    }
-
     /**
      * Возвращает namespace класса
      */
     protected function getNamespace(): string
     {
         if (Str::contains($this->className, '/')) {
-            return "Tests\\Feature\\{$this->getPrefix()}" . str($this->className)->beforeLast('/')->replace('/', '\\');
+            return "Tests\\Feature\\$this->prefix" . str($this->className)->beforeLast('/')->replace('/', '\\');
         }
 
-        return "Tests\\Feature\\{$this->getPrefix()}";
+        return "Tests\\Feature\\$this->prefix";
     }
 
     protected function getExtendsClass(): string
     {
-        return $this->configKey === 'feature' ? 'BaseFeatureTestCase' : 'BaseMoonshineTestCase';
+        return "Base{$this->prefix}TestCase";
     }
 
     /**
@@ -93,8 +98,8 @@ class TestGenerator extends BaseGenerator
     {
         $uses = '';
 
-        foreach ($this->interfaces as $interface) {
-            $uses .= 'use ' . $interface . ";\n";
+        foreach ($this->contracts as $contract) {
+            $uses .= 'use ' . $contract . ";\n";
         }
 
         return rtrim($uses, "\n");
@@ -117,14 +122,14 @@ class TestGenerator extends BaseGenerator
      */
     protected function getImplements(): string
     {
-        if (!count($this->interfaces)) {
+        if (!count($this->contracts)) {
             return '';
         }
 
         $implements = 'implements ';
 
-        foreach ($this->interfaces as $interface) {
-            $implements .= Str::afterLast($interface, '\\') . ', ';
+        foreach ($this->contracts as $contract) {
+            $implements .= Str::afterLast($contract, '\\') . ', ';
         }
 
         return rtrim($implements, ', ');
@@ -139,17 +144,18 @@ class TestGenerator extends BaseGenerator
     {
         $methods = $this->getRouteMiddlewares();
 
-        foreach ($this->interfaces as $interface) {
-            $methods .= match ($interface) {
-                CodeInterface::class => $this->getFilledCodes() . "\n",
-                ParametersInterface::class => $this->getFilledParameters() . "\n",
-                SeedInterface::class => $this->getStub('test.methods_seed') . "\n",
-                MockInterface::class => $this->getStub('test.methods_mock') . "\n",
-                ParametersCodeInterface::class => $this->getFilledInvalidParametersCodes() . "\n",
-                ValidateInterface::class => $this->getFilledValidData() . "\n",
-                NotificationTestInterface::class => $this->getStub('test.methods_notify_check') . "\n",
-                JobTestInterface::class => $this->getStub('test.methods_job_check') . "\n",
-                default => '',
+        foreach ($this->contracts as $contract) {
+            $methods .= match ($contract) {
+                CodeContract::class                                         => $this->getFilledCodes() . "\n",
+                InvalidateCodeContract::class                               => $this->getStub('test.method_invalid_data_code') . "\n",
+                InvalidParametersCodeContract::class                        => $this->getFilledInvalidParametersCodes() . "\n",
+                InvalidParametersContract::class, ParametersContract::class => $this->getFilledParameters($contract) . "\n",
+                JobContract::class                                          => $this->getStub('test.method_jobs') . "\n",
+                MockContract::class                                         => $this->getStub('test.method_mockAction') . "\n",
+                NotificationContract::class                                 => $this->getStub('test.method_notifications') . "\n",
+                SeedContract::class                                         => $this->getStub('test.method_seed') . "\n",
+                ValidateContract::class, InvalidateContract::class          => $this->getFilledValidData($contract),
+                default                                                     => '',
             };
         }
 
@@ -163,7 +169,7 @@ class TestGenerator extends BaseGenerator
      */
     protected function getRouteMiddlewares(): string
     {
-        $stub = $this->getStub('test.methods_route_middleware');
+        $stub = $this->getStub('test.method_route_middleware');
 
         $result = '';
         $middlewares = explode(', ', trim($this->middlewares, ','));
@@ -186,12 +192,12 @@ class TestGenerator extends BaseGenerator
      */
     protected function getFilledCodes(): string
     {
-        $stub = $this->getStub('test.methods_codes');
+        $stub = $this->getStub('test.method_codes');
 
         $result = '';
 
-        foreach (config("fillincode-tests.$this->configKey.users") as $user => $guard) {
-            $result .= "'$user' => " . config("fillincode-tests.$this->configKey.codes.$user") . ",$this->character";
+        foreach (ConfigHelper::get($this->group, $this->configKey, 'users') as $user => $guard) {
+            $result .= "'$user' => " . ConfigHelper::get($this->group, $this->configKey, "codes.valid.$user") . ",$this->character";
         }
 
         return $this->stubReplace(
@@ -206,9 +212,11 @@ class TestGenerator extends BaseGenerator
      *
      * @throws FileNotFoundException
      */
-    protected function getFilledParameters(): string
+    protected function getFilledParameters(string $contract): string
     {
-        $stub = $this->getStub('test.methods_parameters');
+        $stub = $contract === ParametersContract::class
+            ? $this->getStub('test.method_parameters')
+            : $this->getStub('test.method_invalid_parameters');
 
         $result = '';
 
@@ -236,12 +244,12 @@ class TestGenerator extends BaseGenerator
      */
     protected function getFilledInvalidParametersCodes(): string
     {
-        $stub = $this->getStub('test.methods_parameters_codes');
+        $stub = $this->getStub('test.method_invalid_parameters_codes');
 
         $result = '';
 
-        foreach (config("fillincode-tests.$this->configKey.users") as $user => $guard) {
-            $result .= "'$user' => " . config("fillincode-tests.$this->configKey.invalid.parameters") . ",$this->character";
+        foreach (ConfigHelper::get($this->group, $this->configKey, 'users') as $user => $guard) {
+            $result .= "'$user' => " . ConfigHelper::get($this->group, $this->configKey, 'codes.invalid.parameters') . ",$this->character";
         }
 
         return $this->stubReplace(
@@ -256,9 +264,11 @@ class TestGenerator extends BaseGenerator
      *
      * @throws ReflectionException|FileNotFoundException
      */
-    protected function getFilledValidData(): string
+    protected function getFilledValidData(string $contract): string
     {
-        $stub = $this->getStub('test.methods_validate');
+        $stub = $contract === ValidateContract::class
+            ? $this->getStub('test.method_validate')
+            : $this->getStub('test.method_invalidate');
 
         $route = Route::getRoutes()->getByName($this->route_name);
         ReflectionHelper::setActionController($route);
@@ -285,7 +295,7 @@ class TestGenerator extends BaseGenerator
      */
     protected function setPath(): void
     {
-        $this->path = "tests{$this->ds}Feature$this->ds" . str_replace('\\', $this->ds, $this->getPrefix()) .
+        $this->path = "tests{$this->ds}Feature$this->ds" . $this->prefix .
             str($this->className)->replace('/', $this->ds)->value() . '.php';
     }
 
