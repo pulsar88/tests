@@ -113,7 +113,7 @@ class BaseTestCaseGenerator extends BaseGenerator
             }
         }
 
-        return rtrim($result, "\n");
+        return rtrim($result, "\n\n\t");
     }
 
     /**
@@ -147,11 +147,11 @@ class BaseTestCaseGenerator extends BaseGenerator
                         ['{{ studly_name }}', '{{ name }}'],
                         [str($user)->studly(), $user],
                         $stub
-                    ) . "\n";
+                    ) . "\n\n\t";
             }
         }
 
-        return rtrim($result, "\n");
+        return rtrim($result, "\n\n\t");
     }
 
     /**
@@ -185,11 +185,11 @@ class BaseTestCaseGenerator extends BaseGenerator
                     ['{{ studly_name }}', '{{ name }}'],
                     [str($user)->studly(), $user,],
                     $stub
-                );
+                ) . "\n\n\t";
             }
         }
 
-        return rtrim($result, "\n");
+        return rtrim($result, "\n\n\t");
     }
 
     /**
