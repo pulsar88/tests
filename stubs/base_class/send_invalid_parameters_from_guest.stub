@@ -10,6 +10,7 @@
         }
 
         $this->callRouteAction(
+            'guest',
             $this->getValidData('guest'),
             $this->getInvalidParameters('guest')
         )->assertStatus($this->getInvalidParametersCode('guest'));

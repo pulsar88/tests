@@ -6,10 +6,11 @@
     public function testFromGuest(): void
     {
         $this->callRouteAction(
+            'guest',
             $this->getValidData('guest'),
             $this->getParameters('guest')
         )->assertStatus($this->getCode('guest'));
 
-        $this->callJobCheckMethod('guest');
-        $this->callNotifyTestMethod('guest');
+        $this->callJobsMethod('guest');
+        $this->callNotifyMethod('guest');
     }

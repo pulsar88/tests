@@ -11,9 +11,7 @@ use ReflectionException;
 use Fillincode\Tests\Contracts\DocIgnoreContract;
 use Fillincode\Tests\Contracts\JobContract;
 use Fillincode\Tests\Contracts\NotificationContract;
-use Fillincode\Tests\Contracts\ValidateContract;
 use Fillincode\Tests\Contracts\InvalidateContract;
-use Fillincode\Tests\Contracts\ParametersContract;
 use Fillincode\Tests\Contracts\InvalidParametersContract;
 
 abstract class {{ class_name }} extends BaseFillincodeTestCase

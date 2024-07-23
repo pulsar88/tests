@@ -11,6 +11,6 @@
             $this->getParameters('{{ name }}')
         )->assertStatus($this->getCode('{{ name }}'));
 
-        $this->callJobCheckMethod('{{ name }}');
-        $this->callNotifyTestMethod('{{ name }}');
+        $this->callJobsMethod('{{ name }}');
+        $this->callNotifyMethod('{{ name }}');
     }
