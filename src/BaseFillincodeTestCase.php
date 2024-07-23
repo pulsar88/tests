@@ -31,6 +31,11 @@ abstract class BaseFillincodeTestCase extends TestCase
      */
     abstract public function getMiddleware(): array;
 
+    protected function getGroup(): string
+    {
+        return $this->configKey === 'admin_panel' ? 'admin_panel' : 'app';
+    }
+
     /**
      * Проверка имплементации интерфейса
      */
@@ -101,7 +106,7 @@ abstract class BaseFillincodeTestCase extends TestCase
     {
         return $this->checkContract(CodeContract::class)
             ? $this->getCodeFromArray($this->codes($user_key), $user_key)
-            : ConfigHelper::get($this->group, $this->prefix, "codes.valid.$user_key");
+            : ConfigHelper::get($this->getGroup(), $this->configKey, "codes.valid.$user_key");
     }
 
     /**
@@ -111,7 +116,7 @@ abstract class BaseFillincodeTestCase extends TestCase
     {
         return $this->checkContract(InvalidParametersCodeContract::class)
             ? $this->getCodeFromArray($this->codesForInvalidParameters(), $user_key)
-            : ConfigHelper::get($this->group, $this->prefix, 'codes.invalid.parameters');
+            : ConfigHelper::get($this->getGroup(), $this->configKey, 'codes.invalid.parameters');
     }
 
     /**
@@ -123,7 +128,7 @@ abstract class BaseFillincodeTestCase extends TestCase
 
         $def_code = $this->checkContract(InvalidateCodeContract::class)
             ? $this->invalidDataCode($user_key)
-            : ConfigHelper::get($this->group, $this->prefix, "codes.invalid.data");
+            : ConfigHelper::get($this->getGroup(), $this->configKey, "codes.invalid.data");
 
         return $code >= 200 && $code < 399 ? $def_code : $code;
     }
@@ -195,7 +200,7 @@ abstract class BaseFillincodeTestCase extends TestCase
     /**
      * Вызывает метод для проверки уведомлений
      */
-    public function callNotifyMethod(string $user_key): void
+    protected function callNotifyMethod(string $user_key): void
     {
         if ($this->checkContract(NotificationContract::class)) {
             $this->notifications($user_key);
@@ -205,7 +210,7 @@ abstract class BaseFillincodeTestCase extends TestCase
     /**
      * Вызывает метод для заполнения фейковыми данными
      */
-    public function callSeedMethod(string $user_key): void
+    protected function callSeedMethod(string $user_key): void
     {
         if ($this->checkContract(SeedContract::class)) {
             $this->dbSeed($user_key);
