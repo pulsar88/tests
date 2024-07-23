@@ -6,8 +6,8 @@
     public function testFromGuest(): void
     {
         $this->callRouteAction(
-            $this->getValidData(),
-            $this->getParameters()
+            $this->getValidData('guest'),
+            $this->getParameters('guest')
         )->assertStatus($this->getCode('guest'));
 
         $this->callJobCheckMethod('guest');

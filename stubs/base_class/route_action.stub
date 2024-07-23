@@ -7,5 +7,5 @@
     {
         {{ auth }}
 
-        return $this->callRouteAction($data, $parameters);
+        return $this->callRouteAction('{{ user_key }}', $data, $parameters);
     }

@@ -11,7 +11,7 @@
 
         $this->callAuthorizedBy{{ studly_name }}RouteAction(
             $this->get{{ studly_name }}(),
-            $this->getValidData(),
-            $this->getInvalidParameters()
+            $this->getValidData('{{ name }}'),
+            $this->getInvalidParameters('{{ name }}')
         )->assertStatus($this->getInvalidParametersCode('{{ name }}'));
     }

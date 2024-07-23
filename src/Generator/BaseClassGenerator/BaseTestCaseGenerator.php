@@ -15,6 +15,7 @@ class BaseTestCaseGenerator extends BaseGenerator
         protected array $users = [],
     )
     {
+        $this->configKey = $this->configKey ?: $this->group;
         $this->users = ConfigHelper::get($this->group, $this->configKey, 'users');
     }
 
@@ -82,8 +83,8 @@ class BaseTestCaseGenerator extends BaseGenerator
                 }
 
                 $result .= $this->stubReplace(
-                        ['{{ name }}', '{{ auth }}',],
-                        [str($user)->studly(), $auth],
+                        ['{{ name }}', '{{ user_key }}', '{{ auth }}',],
+                        [str($user)->studly(), $user, $auth],
                         $stub) . "\n";
             }
         }
@@ -233,7 +234,7 @@ class BaseTestCaseGenerator extends BaseGenerator
 
     protected function getClassName(): string
     {
-        return 'Base' . str($this->configKey)->studly() . 'testCase';
+        return 'Base' . str($this->configKey)->studly() . 'TestCase';
     }
 
     /**

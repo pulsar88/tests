@@ -7,8 +7,8 @@
     {
         $this->callAuthorizedBy{{ studly_name }}RouteAction(
             $this->get{{ studly_name }}(),
-            $this->getValidData(),
-            $this->getParameters()
+            $this->getValidData('{{ name }}'),
+            $this->getParameters('{{ name }}')
         )->assertStatus($this->getCode('{{ name }}'));
 
         $this->callJobCheckMethod('{{ name }}');

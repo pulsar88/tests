@@ -25,7 +25,7 @@ abstract class {{ class_name }} extends BaseFillincodeTestCase
      *
      * @throws ReflectionException
      */
-    private function callRouteAction(array $data = [], array $parameters = []): TestResponse
+    private function callRouteAction(string $user_key, array $data = [], array $parameters = []): TestResponse
     {
         $route = $this->getRouteByName();
         $method = $route->methods()[0];
@@ -39,8 +39,8 @@ abstract class {{ class_name }} extends BaseFillincodeTestCase
            Notification::fake();
         }
 
-        $this->callSeedMethod();
-        $this->callMockMethod();
+        $this->callSeedMethod($user_key);
+        $this->callMockMethod($user_key);
 
         $testResponse = $this->json($method, $uri, $data);
         {{ test_parser }}
