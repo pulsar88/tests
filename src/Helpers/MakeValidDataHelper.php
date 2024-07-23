@@ -2,8 +2,6 @@
 
 namespace Fillincode\Tests\Helpers;
 
-use Illuminate\Support\Str;
-
 class MakeValidDataHelper
 {
     protected string $key;
@@ -186,7 +184,7 @@ class MakeValidDataHelper
             'date' => "now()->subYears(5)->format('Y-m-d')",
             'array' => '[]',
             'undefined' => "str('$this->key')->contains('id') ? 1 : \Illuminate\Support\Str::random(12)",
-            'password' =>  "\"".str(Str::password())."\"",
+            'password' =>  '\Illuminate\Support\Str::password()',
             default => "''",
         };
     }
