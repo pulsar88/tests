@@ -29,7 +29,7 @@ class InitConfigCommand extends Command
      */
     public function handle(): int
     {
-        foreach (config('fillincode-test.app') as $key => $value) {
+        foreach (config('fillincode-tests.app') as $key => $value) {
             if ($key !== 'default') {
                 (new BaseTestCaseGenerator('app', $key))->generate();
             }
