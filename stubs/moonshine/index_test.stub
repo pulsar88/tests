@@ -2,10 +2,10 @@
 
 namespace {{ namespace }};
 
-use Fillincode\Tests\Interfaces\CodeContract;
-use Fillincode\Tests\Interfaces\DocIgnoreContract;
-use Fillincode\Tests\Interfaces\ParametersContract;
-use Tests\Feature\BaseMoonshineTestCase;
+use Fillincode\Tests\Contracts\CodeContract;
+use Fillincode\Tests\Contracts\DocIgnoreContract;
+use Fillincode\Tests\Contracts\ParametersContract;
+use Tests\Feature\BaseAdminPanelTestCase;
 
 class IndexTest extends BaseAdminPanelTestCase implements CodeContract, DocIgnoreContract, ParametersContract
 {

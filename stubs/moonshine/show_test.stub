@@ -2,12 +2,12 @@
 
 namespace {{ namespace }};
 
-use Fillincode\Tests\Interfaces\CodeContract;
-use Fillincode\Tests\Interfaces\DocIgnoreContract;
-use Fillincode\Tests\Interfaces\ParametersContract;
-use Fillincode\Tests\Interfaces\ValidateContract;
+use Fillincode\Tests\Contracts\CodeContract;
+use Fillincode\Tests\Contracts\DocIgnoreContract;
+use Fillincode\Tests\Contracts\ParametersContract;
+use Fillincode\Tests\Contracts\ValidateContract;
 use Illuminate\Support\Facades\DB;
-use Tests\Feature\BaseMoonshineTestCase;
+use Tests\Feature\BaseAdminPanelTestCase;
 
 class DetailTest extends BaseAdminPanelTestCase implements CodeContract, DocIgnoreContract, ParametersContract, ValidateContract
 {
