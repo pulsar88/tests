@@ -9,7 +9,7 @@ use Fillincode\Tests\Interfaces\ValidateContract;
 use Illuminate\Support\Facades\DB;
 use Tests\Feature\BaseMoonshineTestCase;
 
-class DetailTest extends BaseMoonshineTestCase implements CodeContract, DocIgnoreContract, ParametersContract, ValidateContract
+class DetailTest extends BaseAdminPanelTestCase implements CodeContract, DocIgnoreContract, ParametersContract, ValidateContract
 {
     /**
      * {@inheritDoc}

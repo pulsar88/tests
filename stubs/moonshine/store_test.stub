@@ -8,7 +8,7 @@ use Fillincode\Tests\Interfaces\ParametersContract;
 use Fillincode\Tests\Interfaces\ValidateContract;
 use Tests\Feature\BaseMoonshineTestCase;
 
-class CreateProcessTest extends BaseMoonshineTestCase implements CodeContract, DocIgnoreContract, ParametersContract, ValidateContract
+class CreateProcessTest extends BaseAdminPanelTestCase implements CodeContract, DocIgnoreContract, ParametersContract, ValidateContract
 {
     /**
      * {@inheritDoc}

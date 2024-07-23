@@ -8,7 +8,7 @@ use Fillincode\Tests\Interfaces\ParametersContract;
 use Illuminate\Support\Facades\DB;
 use Tests\Feature\BaseMoonshineTestCase;
 
-class RemoveTest extends BaseMoonshineTestCase implements CodeContract, DocIgnoreContract, ParametersContract
+class RemoveTest extends BaseAdminPanelTestCase implements CodeContract, DocIgnoreContract, ParametersContract
 {
     /**
      * {@inheritDoc}

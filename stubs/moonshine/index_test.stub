@@ -7,7 +7,7 @@ use Fillincode\Tests\Interfaces\DocIgnoreContract;
 use Fillincode\Tests\Interfaces\ParametersContract;
 use Tests\Feature\BaseMoonshineTestCase;
 
-class IndexTest extends BaseMoonshineTestCase implements CodeContract, DocIgnoreContract, ParametersContract
+class IndexTest extends BaseAdminPanelTestCase implements CodeContract, DocIgnoreContract, ParametersContract
 {
     /**
      * {@inheritDoc}
