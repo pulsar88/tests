@@ -33,7 +33,7 @@ abstract class BaseFillincodeTestCase extends TestCase
 
     protected function getGroup(): string
     {
-        return $this->configKey === 'admin_panel' ? 'admin_panel' : 'app';
+        return $this->config_key === 'admin_panel' ? 'admin_panel' : 'app';
     }
 
     /**
@@ -106,7 +106,7 @@ abstract class BaseFillincodeTestCase extends TestCase
     {
         return $this->checkContract(CodeContract::class)
             ? $this->getCodeFromArray($this->codes($user_key), $user_key)
-            : ConfigHelper::get($this->getGroup(), $this->configKey, "codes.valid.$user_key");
+            : ConfigHelper::get($this->getGroup(), $this->config_key, "codes.valid.$user_key");
     }
 
     /**
@@ -116,7 +116,7 @@ abstract class BaseFillincodeTestCase extends TestCase
     {
         return $this->checkContract(InvalidParametersCodeContract::class)
             ? $this->getCodeFromArray($this->codesForInvalidParameters(), $user_key)
-            : ConfigHelper::get($this->getGroup(), $this->configKey, 'codes.invalid.parameters');
+            : ConfigHelper::get($this->getGroup(), $this->config_key, 'codes.invalid.parameters');
     }
 
     /**
@@ -128,7 +128,7 @@ abstract class BaseFillincodeTestCase extends TestCase
 
         $def_code = $this->checkContract(InvalidateCodeContract::class)
             ? $this->invalidDataCode($user_key)
-            : ConfigHelper::get($this->getGroup(), $this->configKey, "codes.invalid.data");
+            : ConfigHelper::get($this->getGroup(), $this->config_key, "codes.invalid.data");
 
         return $code >= 200 && $code < 399 ? $def_code : $code;
     }
