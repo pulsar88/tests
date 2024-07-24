@@ -3,8 +3,6 @@
 return [
     'app' => [
         'default' => [
-            'prefix' => 'default',
-
             'users' => [
                 'guest' => '',
                 'api_user' => 'Passport',
@@ -26,18 +24,22 @@ return [
         ],
 
         'api' => [
-            'dir' => 'api',
+            'invalid' => [
+                'data' => 404,
+                'parameters' => 401
+            ]
         ],
 
         'web' => [
-            'dir' => 'web',
+            'invalid' => [
+                'data' => 404,
+                'parameters' => 401
+            ]
         ]
     ],
 
     'admin_panel' => [
         'name' => 'moonshine',
-
-        'dir' => 'admin',
 
         'users' => [
             'guest' => '',

@@ -3,5 +3,5 @@
      */
     public function mockAction(string $user_key): void
     {
-        //
+        //todo Добавьте насмешки над классами
     }
