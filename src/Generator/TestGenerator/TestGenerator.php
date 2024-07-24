@@ -295,8 +295,8 @@ class TestGenerator extends BaseGenerator
      */
     protected function setPath(): void
     {
-        $this->path = "tests{$this->ds}Feature$this->ds" . $this->prefix .
-            str($this->className)->replace(['\\', '/'], $this->ds)->value() . '.php';
+        $this->path = "tests{$this->ds}Feature$this->ds" . str($this->prefix)->replace('\\', $this->ds)->value() .
+            str($this->className)->replace('/', $this->ds)->value() . '.php';
     }
 
     /**
