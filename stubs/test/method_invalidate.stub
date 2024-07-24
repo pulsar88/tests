@@ -1,7 +1,7 @@
     /**
     * {@inheritDoc}
     */
-    public function getNotValidData(): array
+    public function invalidData(string $user_key): array
     {
         return [
             {{ data }}

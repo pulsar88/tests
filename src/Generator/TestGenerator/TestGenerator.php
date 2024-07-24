@@ -48,7 +48,7 @@ class TestGenerator extends BaseGenerator
     )
     {
         $this->configKey = $this->prefix;
-        $this->prefix = str($this->prefix ?: $this->group)->lower()->studly() . '\\';
+        $this->prefix = str($this->prefix ?: $this->group)->lower()->studly();
     }
 
     /**
@@ -80,10 +80,10 @@ class TestGenerator extends BaseGenerator
     protected function getNamespace(): string
     {
         if (Str::contains($this->className, '/')) {
-            return "Tests\\Feature\\$this->prefix" . str($this->className)->beforeLast('/')->replace('/', '\\');
+            return "Tests\\Feature\\$this->prefix\\" . str($this->className)->beforeLast('/')->replace('/', '\\');
         }
 
-        return "Tests\\Feature\\$this->prefix";
+        return "Tests\\Feature\\$this->prefix\\";
     }
 
     protected function getExtendsClass(): string
@@ -295,7 +295,7 @@ class TestGenerator extends BaseGenerator
      */
     protected function setPath(): void
     {
-        $this->path = "tests{$this->ds}Feature$this->ds" . str($this->prefix)->replace('\\', $this->ds)->value() .
+        $this->path = "tests{$this->ds}Feature$this->ds$this->prefix$this->ds" .
             str($this->className)->replace('/', $this->ds)->value() . '.php';
     }
 

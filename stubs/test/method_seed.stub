@@ -1,7 +1,7 @@
     /**
      * {@inheritDoc}
      */
-    public function seeder(string $user_key): void
+    public function dbSeed(string $user_key): void
     {
         //
     }

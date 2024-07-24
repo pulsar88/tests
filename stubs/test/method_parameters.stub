@@ -1,7 +1,7 @@
     /**
      * {@inheritDoc}
      */
-    public function parameters(): array
+    public function parameters(string $user_key): array
     {
         return [
             {{ parameters }}

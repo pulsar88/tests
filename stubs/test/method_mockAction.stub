@@ -1,7 +1,7 @@
     /**
      * {@inheritDoc}
      */
-    public function mockAction(string $user_type): void
+    public function mockAction(string $user_key): void
     {
         //
     }
