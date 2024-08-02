@@ -125,6 +125,10 @@ class MakeTestCommand extends Command
 
     protected function getPrefix(): ?string
     {
-        return $this->option('admin') ? null : $this->argument('group', array_key(config('fillincode-tests.app')[1]));
+        if ($this->option('admin')) {
+            return null;
+        }
+
+        return $this->argument('group') ?: array_keys(config('fillincode-tests.app'))[1];
     }
 }
